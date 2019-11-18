@@ -128,7 +128,7 @@ namespace MultiChatClient {
             mainSock.Send(bDts);
 
             // 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
-            AppendText(txtHistory, string.Format("[보냄]{0}: {1}", nameID, tts));
+            AppendText(txtHistory, string.Format("[나]{0}: {1}", nameID, tts));
             txtTTS.Clear();
         }
 
@@ -139,6 +139,16 @@ namespace MultiChatClient {
                 mainSock.Close();
             }
 
+        }
+
+        private void txtTTS_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (Convert.ToInt32(e.KeyChar) == 13)
+            {
+                // MessageBox.Show(" Enter pressed ");
+                OnSendData(sender, e);
+
+            }
         }
     }
 }

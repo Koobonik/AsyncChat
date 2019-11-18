@@ -29,3 +29,12 @@ C:\Users\CS3-14\Downloads\MultiChat - ID 추가_브로드캐스트 (2) (1)\Multi
 C:\Users\CS3-14\Downloads\MultiChat - ID 추가_브로드캐스트 (2) (1)\MultiChatServer\obj\Debug\MultiChatServer.csproj.CoreCompileInputs.cache
 C:\Users\CS3-14\Downloads\MultiChat - ID 추가_브로드캐스트 (2) (1)\MultiChatServer\obj\Debug\MultiChatServer.exe
 C:\Users\CS3-14\Downloads\MultiChat - ID 추가_브로드캐스트 (2) (1)\MultiChatServer\obj\Debug\MultiChatServer.pdb
+C:\Users\CS3-14\Desktop\dev\code\csMultiChat\MultiChatServer\bin\Debug\MultiChatServer.exe
+C:\Users\CS3-14\Desktop\dev\code\csMultiChat\MultiChatServer\obj\Debug\MultiChatServer.csprojAssemblyReference.cache
+C:\Users\CS3-14\Desktop\dev\code\csMultiChat\MultiChatServer\obj\Debug\MultiChatServer.ChatForm.resources
+C:\Users\CS3-14\Desktop\dev\code\csMultiChat\MultiChatServer\obj\Debug\MultiChatServer.Properties.Resources.resources
+C:\Users\CS3-14\Desktop\dev\code\csMultiChat\MultiChatServer\obj\Debug\MultiChatServer.csproj.GenerateResource.cache
+C:\Users\CS3-14\Desktop\dev\code\csMultiChat\MultiChatServer\obj\Debug\MultiChatServer.csproj.CoreCompileInputs.cache
+C:\Users\CS3-14\Desktop\dev\code\csMultiChat\MultiChatServer\obj\Debug\MultiChatServer.exe
+C:\Users\CS3-14\Desktop\dev\code\csMultiChat\MultiChatServer\obj\Debug\MultiChatServer.pdb
+C:\Users\CS3-14\Desktop\dev\code\csMultiChat\MultiChatServer\bin\Debug\MultiChatServer.pdb

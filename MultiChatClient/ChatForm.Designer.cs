@@ -74,6 +74,7 @@
             this.txtTTS.Name = "txtTTS";
             this.txtTTS.Size = new System.Drawing.Size(361, 27);
             this.txtTTS.TabIndex = 7;
+            this.txtTTS.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTTS_KeyPress);
             // 
             // lblTTS
             // 

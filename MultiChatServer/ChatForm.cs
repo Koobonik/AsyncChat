@@ -193,5 +193,32 @@ namespace MultiChatServer {
             catch { }
 
         }
+
+        private void txtPort_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtTTS_TextChanged(object sender, EventArgs e, KeyPressEventArgs f)
+        {
+            Console.WriteLine("눌림");
+            if (Convert.ToInt32(f.KeyChar) == 13)
+            {
+                MessageBox.Show(" Enter pressed ");
+            }
+        }
+
+        private void txtTTS_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void txtTTS_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (Convert.ToInt32(e.KeyChar) == 13)
+            {
+                MessageBox.Show(" Enter pressed ");
+            }
+        }
     }
 }
