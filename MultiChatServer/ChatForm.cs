@@ -18,6 +18,7 @@ namespace MultiChatServer {
             mainSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
             _textAppender = new AppendTextDelegate(AppendText);
             connectedClients = new List<Socket>();
+            // BeginStartServer(null, null);
         }
 
         void AppendText(Control ctrl, string s) {
@@ -36,6 +37,11 @@ namespace MultiChatServer {
                 if (addr.AddressFamily == AddressFamily.InterNetwork)
                 {
                     AppendText(txtHistory, addr.ToString());
+                    string[] ip = addr.ToString().Split('.');
+                    if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10"))
+                    {
+                        AppendText(txtHistory, "포함");
+                    }
                 }
             }
 
