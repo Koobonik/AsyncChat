@@ -202,7 +202,7 @@ namespace MultiChatServer {
             }
 
             // 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
-            AppendText(txtHistory, string.Format("[서버 공지]Server: {0}", tts));
+            AppendText(txtHistory, string.Format("[서버 공지]Server : {0}", tts));
             txtTTS.Clear();
         }
 

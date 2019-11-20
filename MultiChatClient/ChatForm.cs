@@ -53,7 +53,9 @@ namespace MultiChatClient {
             AppendText(txtHistory, string.Format("서버: @{0}, port: 15000, ID: @{1}", 
                 txtAddress.Text, nameID));
             try {
-                mainSock.Connect(txtAddress.Text, port); }
+                // 여기서 브로드 캐스트 한번 해줘야 함
+                mainSock.Connect(txtAddress.Text, port);
+            }
             catch (Exception ex) {
                 MsgBoxHelper.Error("연결에 실패했습니다!\n오류 내용: {0}", MessageBoxButtons.OK, ex.Message);
                 return;
@@ -94,7 +96,15 @@ namespace MultiChatClient {
             // 텍스트박스에 추가해준다.
             // 비동기식으로 작업하기 때문에 폼의 UI 스레드에서 작업을 해줘야 한다.
             // 따라서 대리자를 통해 처리한다.
-            AppendText(txtHistory, string.Format("[받음]{0}: {1}", id, msg));
+            if (id.Equals("Server"))
+            {
+                AppendText(txtHistory, string.Format("[공지사항이 등록되었습니다.] : {0}", msg));
+            }
+            else
+            {
+                AppendText(txtHistory, string.Format("[받음]{0} : {1}", id, msg));
+            }
+            
             
             // 클라이언트에선 데이터를 전달해줄 필요가 없으므로 바로 수신 대기한다.
             // 데이터를 받은 후엔 다시 버퍼를 비워주고 같은 방법으로 수신을 대기한다.
@@ -128,7 +138,7 @@ namespace MultiChatClient {
             mainSock.Send(bDts);
 
             // 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
-            AppendText(txtHistory, string.Format("[나]{0}: {1}", nameID, tts));
+            AppendText(txtHistory, string.Format("[나]{0} : {1}", nameID, tts));
             txtTTS.Clear();
         }
 
