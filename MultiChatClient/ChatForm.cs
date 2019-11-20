@@ -87,7 +87,7 @@ namespace MultiChatClient {
             // : 기준으로 짜른다.
             // tokens[0] - 보낸 사람 ID
             // tokens[1] - 보낸 메세지
-            string[] tokens = text.Split(':');
+            string[] tokens = text.Split('`');
             string id = tokens[0];
             string msg = tokens[1];
 
@@ -122,7 +122,7 @@ namespace MultiChatClient {
             // ID 와 메세지를 담도록 만든다.
 
             // 문자열을 utf8 형식의 바이트로 변환한다.
-            byte[] bDts = Encoding.UTF8.GetBytes(nameID + ':' + tts);
+            byte[] bDts = Encoding.UTF8.GetBytes(nameID + '`' + tts);
 
             // 서버에 전송한다.
             mainSock.Send(bDts);

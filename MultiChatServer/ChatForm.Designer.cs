@@ -85,7 +85,7 @@
             this.lblTTS.Name = "lblTTS";
             this.lblTTS.Size = new System.Drawing.Size(98, 30);
             this.lblTTS.TabIndex = 6;
-            this.lblTTS.Text = "보낼 텍스트";
+            this.lblTTS.Text = "공지 띄우기";
             this.lblTTS.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblAddress
@@ -144,7 +144,7 @@
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(98, 30);
             this.btnSend.TabIndex = 8;
-            this.btnSend.Text = "보내기";
+            this.btnSend.Text = "공지하기";
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.OnSendData);
             // 

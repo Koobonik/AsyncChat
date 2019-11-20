@@ -18,7 +18,7 @@ namespace MultiChatServer {
             mainSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
             _textAppender = new AppendTextDelegate(AppendText);
             connectedClients = new List<Socket>();
-            // BeginStartServer(null, null);
+            BeginStartServer(null, null);
         }
 
         void AppendText(Control ctrl, string s) {
@@ -36,27 +36,32 @@ namespace MultiChatServer {
             {
                 if (addr.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    AppendText(txtHistory, addr.ToString());
+                    //AppendText(txtHistory, addr.ToString());
                     string[] ip = addr.ToString().Split('.');
+                    // ! A, B, C 클래스 제외
                     if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10"))
                     {
-                        AppendText(txtHistory, "포함");
+                        //AppendText(txtHistory, "포함");
+                    }
+                    else
+                    {
+                        thisAddress = IPAddress.Parse(addr.ToString());
                     }
                 }
             }
 
             // 주소가 없다면..
 
-            if (thisAddress == null)
-            {
-                // 로컬호스트 주소를 사용한다.
-                thisAddress = IPAddress.Loopback;
-                txtAddress.Text = thisAddress.ToString();
-            }
-            else
-            {
-                thisAddress = IPAddress.Parse(txtAddress.Text);
-            }
+            //if (thisAddress == null)
+            //{
+            //    // 로컬호스트 주소를 사용한다.
+            //    thisAddress = IPAddress.Loopback;
+            //    txtAddress.Text = thisAddress.ToString();
+            //}
+            //else
+            //{
+            //    thisAddress = IPAddress.Parse(txtAddress.Text);
+            //}
         }
         void BeginStartServer(object sender, EventArgs e) {
             int port;
@@ -67,15 +72,24 @@ namespace MultiChatServer {
                 return;
             }
 
-            if (thisAddress == null)
+            IPHostEntry he = Dns.GetHostEntry(Dns.GetHostName());
+            // 처음으로 발견되는 ipv4 주소를 사용한다.
+            foreach (IPAddress addr in he.AddressList)
             {
-                // 로컬호스트 주소를 사용한다.
-                thisAddress = IPAddress.Loopback;
-                txtAddress.Text = thisAddress.ToString();
-            }
-            else
-            {
-                thisAddress = IPAddress.Parse(txtAddress.Text);
+                if (addr.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    //AppendText(txtHistory, addr.ToString());
+                    string[] ip = addr.ToString().Split('.');
+                    // ! A, B, C 클래스 제외
+                    if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10"))
+                    {
+                        //AppendText(txtHistory, "포함");
+                    }
+                    else
+                    {
+                        thisAddress = IPAddress.Parse(addr.ToString());
+                    }
+                }
             }
             // 서버에서 클라이언트의 연결 요청을 대기하기 위해
             // 소켓을 열어둔다.
@@ -130,7 +144,7 @@ namespace MultiChatServer {
             // : 기준으로 짜른다.
             // tokens[0] - 보낸 사람 ID
             // tokens[1] - 보낸 메세지
-            string[] tokens = text.Split(':');
+            string[] tokens = text.Split('`');
             string id = tokens[0];
             string msg = tokens[1];
 
@@ -175,7 +189,7 @@ namespace MultiChatServer {
             }
             
             // 문자열을 utf8 형식의 바이트로 변환한다.
-            byte[] bDts = Encoding.UTF8.GetBytes("Server" + ':' + tts);
+            byte[] bDts = Encoding.UTF8.GetBytes("Server" + '`' + tts);
 
             // 연결된 모든 클라이언트에게 전송한다.
             for (int i = connectedClients.Count - 1; i >= 0; i--) {
@@ -188,7 +202,7 @@ namespace MultiChatServer {
             }
 
             // 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
-            AppendText(txtHistory, string.Format("[보냄]server: {0}", tts));
+            AppendText(txtHistory, string.Format("[서버 공지]Server: {0}", tts));
             txtTTS.Clear();
         }
 
@@ -226,5 +240,6 @@ namespace MultiChatServer {
                 MessageBox.Show(" Enter pressed ");
             }
         }
+        
     }
 }
