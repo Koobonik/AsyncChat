@@ -43,9 +43,9 @@ C:\Users\CS3-14\Desktop\dev\code\csMultiChat\MultiChatClient\bin\Debug\MultiChat
 C:\Users\CS3-14\Desktop\dev\code\AsyncChat\MultiChatClient\bin\Debug\MultiChatClient.exe
 C:\Users\CS3-14\Desktop\dev\code\AsyncChat\MultiChatClient\bin\Debug\MultiChatClient.pdb
 C:\Users\CS3-14\Desktop\dev\code\AsyncChat\MultiChatClient\obj\Debug\MultiChatClient.csprojAssemblyReference.cache
-C:\Users\CS3-14\Desktop\dev\code\AsyncChat\MultiChatClient\obj\Debug\MultiChatClient.ChatForm.resources
 C:\Users\CS3-14\Desktop\dev\code\AsyncChat\MultiChatClient\obj\Debug\MultiChatClient.Properties.Resources.resources
 C:\Users\CS3-14\Desktop\dev\code\AsyncChat\MultiChatClient\obj\Debug\MultiChatClient.csproj.GenerateResource.cache
 C:\Users\CS3-14\Desktop\dev\code\AsyncChat\MultiChatClient\obj\Debug\MultiChatClient.csproj.CoreCompileInputs.cache
 C:\Users\CS3-14\Desktop\dev\code\AsyncChat\MultiChatClient\obj\Debug\MultiChatClient.exe
 C:\Users\CS3-14\Desktop\dev\code\AsyncChat\MultiChatClient\obj\Debug\MultiChatClient.pdb
+C:\Users\CS3-14\Desktop\dev\code\AsyncChat\MultiChatClient\obj\Debug\MultiChatClient.ChatForm_Client.resources

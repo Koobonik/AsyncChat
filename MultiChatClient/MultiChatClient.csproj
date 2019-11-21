@@ -45,17 +45,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsyncObject.cs" />
-    <Compile Include="ChatForm.cs">
+    <Compile Include="ChatForm_Client.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ChatForm.Designer.cs">
-      <DependentUpon>ChatForm.cs</DependentUpon>
+    <Compile Include="ChatForm_Client.Designer.cs">
+      <DependentUpon>ChatForm_Client.cs</DependentUpon>
     </Compile>
     <Compile Include="MsgBoxHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ChatForm.resx">
-      <DependentUpon>ChatForm.cs</DependentUpon>
+    <EmbeddedResource Include="ChatForm_Client.resx">
+      <DependentUpon>ChatForm_Client.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

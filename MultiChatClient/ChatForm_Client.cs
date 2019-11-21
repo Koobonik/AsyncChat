@@ -5,14 +5,14 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace MultiChatClient {
-    public partial class ChatForm : Form {
+    public partial class ChatForm_Client : Form {
         delegate void AppendTextDelegate(Control ctrl, string s);
         AppendTextDelegate _textAppender;
         Socket mainSock;
         IPAddress thisAddress;
         string nameID;
 
-        public ChatForm() {
+        public ChatForm_Client() {
             InitializeComponent();
             mainSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
             _textAppender = new AppendTextDelegate(AppendText);

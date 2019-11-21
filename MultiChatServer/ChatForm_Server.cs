@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace MultiChatServer {
-    public partial class ChatForm : Form {
+    public partial class ChatForm_Server : Form {
         delegate void AppendTextDelegate(Control ctrl, string s);
         AppendTextDelegate _textAppender;
         Socket mainSock;
         IPAddress thisAddress;
         List<Socket> connectedClients;
 
-        public ChatForm() {
+        public ChatForm_Server() {
             InitializeComponent();
             mainSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
             _textAppender = new AppendTextDelegate(AppendText);
@@ -39,7 +39,7 @@ namespace MultiChatServer {
                     //AppendText(txtHistory, addr.ToString());
                     string[] ip = addr.ToString().Split('.');
                     // ! A, B, C 클래스 제외
-                    if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10"))
+                    if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10") || ip[0].Equals("169") || ip[0].Equals("127") || ip[0].Equals("0") || ip[0].Equals("224") || ip[0].Equals("240") || ip[0].Equals("239"))
                     {
                         //AppendText(txtHistory, "포함");
                     }
@@ -81,7 +81,7 @@ namespace MultiChatServer {
                     //AppendText(txtHistory, addr.ToString());
                     string[] ip = addr.ToString().Split('.');
                     // ! A, B, C 클래스 제외
-                    if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10"))
+                    if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10") || ip[0].Equals("169") || ip[0].Equals("127") || ip[0].Equals("0") || ip[0].Equals("224") || ip[0].Equals("240") || ip[0].Equals("239"))
                     {
                         //AppendText(txtHistory, "포함");
                     }

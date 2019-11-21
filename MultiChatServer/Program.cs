@@ -12,7 +12,7 @@ namespace MultiChatServer {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ChatForm());
+            Application.Run(new ChatForm_Server());
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿namespace MultiChatClient {
-    partial class ChatForm {
+﻿namespace MultiChatServer {
+    partial class ChatForm_Server {
         /// <summary>
         /// 필수 디자이너 변수입니다.
         /// </summary>
@@ -28,11 +28,11 @@
             this.lblTTS = new System.Windows.Forms.Label();
             this.lblAddress = new System.Windows.Forms.Label();
             this.txtAddress = new System.Windows.Forms.TextBox();
-            this.btnConnect = new System.Windows.Forms.Button();
+            this.btnStart = new System.Windows.Forms.Button();
             this.txtHistory = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
-            this.lblPortNumber = new System.Windows.Forms.Label();
-            this.txtID = new System.Windows.Forms.TextBox();
+            this.lblPort = new System.Windows.Forms.Label();
+            this.txtPort = new System.Windows.Forms.TextBox();
             this.tblMainLayout.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,11 +48,11 @@
             this.tblMainLayout.Controls.Add(this.lblTTS, 0, 2);
             this.tblMainLayout.Controls.Add(this.lblAddress, 0, 0);
             this.tblMainLayout.Controls.Add(this.txtAddress, 1, 0);
-            this.tblMainLayout.Controls.Add(this.btnConnect, 4, 0);
+            this.tblMainLayout.Controls.Add(this.btnStart, 4, 0);
             this.tblMainLayout.Controls.Add(this.txtHistory, 0, 1);
             this.tblMainLayout.Controls.Add(this.btnSend, 4, 2);
-            this.tblMainLayout.Controls.Add(this.lblPortNumber, 2, 0);
-            this.tblMainLayout.Controls.Add(this.txtID, 3, 0);
+            this.tblMainLayout.Controls.Add(this.lblPort, 2, 0);
+            this.tblMainLayout.Controls.Add(this.txtPort, 3, 0);
             this.tblMainLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tblMainLayout.Location = new System.Drawing.Point(0, 0);
             this.tblMainLayout.Name = "tblMainLayout";
@@ -62,7 +62,7 @@
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.tblMainLayout.Size = new System.Drawing.Size(584, 441);
-            this.tblMainLayout.TabIndex = 2;
+            this.tblMainLayout.TabIndex = 1;
             // 
             // txtTTS
             // 
@@ -85,7 +85,7 @@
             this.lblTTS.Name = "lblTTS";
             this.lblTTS.Size = new System.Drawing.Size(98, 30);
             this.lblTTS.TabIndex = 6;
-            this.lblTTS.Text = "보낼 텍스트";
+            this.lblTTS.Text = "공지 띄우기";
             this.lblTTS.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblAddress
@@ -111,17 +111,17 @@
             this.txtAddress.Size = new System.Drawing.Size(161, 27);
             this.txtAddress.TabIndex = 1;
             // 
-            // btnConnect
+            // btnStart
             // 
-            this.btnConnect.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnConnect.Location = new System.Drawing.Point(477, 9);
-            this.btnConnect.Margin = new System.Windows.Forms.Padding(1);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(98, 30);
-            this.btnConnect.TabIndex = 4;
-            this.btnConnect.Text = "연결";
-            this.btnConnect.UseVisualStyleBackColor = true;
-            this.btnConnect.Click += new System.EventHandler(this.OnConnectToServer);
+            this.btnStart.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnStart.Location = new System.Drawing.Point(477, 9);
+            this.btnStart.Margin = new System.Windows.Forms.Padding(1);
+            this.btnStart.Name = "btnStart";
+            this.btnStart.Size = new System.Drawing.Size(98, 30);
+            this.btnStart.TabIndex = 4;
+            this.btnStart.Text = "시작";
+            this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.BeginStartServer);
             // 
             // txtHistory
             // 
@@ -144,40 +144,42 @@
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(98, 30);
             this.btnSend.TabIndex = 8;
-            this.btnSend.Text = "보내기";
+            this.btnSend.Text = "공지하기";
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.OnSendData);
             // 
-            // lblPortNumber
+            // lblPort
             // 
-            this.lblPortNumber.AutoSize = true;
-            this.lblPortNumber.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblPortNumber.Location = new System.Drawing.Point(277, 9);
-            this.lblPortNumber.Margin = new System.Windows.Forms.Padding(1);
-            this.lblPortNumber.Name = "lblPortNumber";
-            this.lblPortNumber.Size = new System.Drawing.Size(98, 30);
-            this.lblPortNumber.TabIndex = 2;
-            this.lblPortNumber.Text = "ID";
-            this.lblPortNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPort.AutoSize = true;
+            this.lblPort.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblPort.Location = new System.Drawing.Point(277, 9);
+            this.lblPort.Margin = new System.Windows.Forms.Padding(1);
+            this.lblPort.Name = "lblPort";
+            this.lblPort.Size = new System.Drawing.Size(98, 30);
+            this.lblPort.TabIndex = 2;
+            this.lblPort.Text = "포트 번호";
+            this.lblPort.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // txtID
+            // txtPort
             // 
-            this.txtID.Dock = System.Windows.Forms.DockStyle.Right;
-            this.txtID.Location = new System.Drawing.Point(380, 10);
-            this.txtID.Margin = new System.Windows.Forms.Padding(4, 2, 3, 3);
-            this.txtID.MaxLength = 5;
-            this.txtID.Name = "txtID";
-            this.txtID.Size = new System.Drawing.Size(93, 27);
-            this.txtID.TabIndex = 3;
+            this.txtPort.Dock = System.Windows.Forms.DockStyle.Right;
+            this.txtPort.Location = new System.Drawing.Point(380, 10);
+            this.txtPort.Margin = new System.Windows.Forms.Padding(4, 2, 3, 3);
+            this.txtPort.MaxLength = 5;
+            this.txtPort.Name = "txtPort";
+            this.txtPort.Size = new System.Drawing.Size(93, 27);
+            this.txtPort.TabIndex = 3;
+            this.txtPort.Text = "15000";
+            this.txtPort.TextChanged += new System.EventHandler(this.txtPort_TextChanged);
             // 
             // ChatForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(584, 441);
             this.Controls.Add(this.tblMainLayout);
-            this.Font = new System.Drawing.Font("맑은 고딕", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.Font = new System.Drawing.Font("맑은 고딕", 11.25F);
             this.Name = "ChatForm";
-            this.Text = "Multi Chat Client";
+            this.Text = "Multi Chat Server";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ChatForm_FormClosing);
             this.Load += new System.EventHandler(this.OnFormLoaded);
             this.tblMainLayout.ResumeLayout(false);
@@ -193,11 +195,11 @@
         private System.Windows.Forms.Label lblTTS;
         private System.Windows.Forms.Label lblAddress;
         private System.Windows.Forms.TextBox txtAddress;
-        private System.Windows.Forms.Button btnConnect;
+        private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.TextBox txtHistory;
         private System.Windows.Forms.Button btnSend;
-        private System.Windows.Forms.Label lblPortNumber;
-        private System.Windows.Forms.TextBox txtID;
+        private System.Windows.Forms.Label lblPort;
+        private System.Windows.Forms.TextBox txtPort;
     }
 }
 
