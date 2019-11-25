@@ -4,9 +4,15 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Text;
-
+using Newtonsoft.Json;
 namespace MultiChatServer {
     public partial class ChatForm_Server : Form {
+
+        class DataForm
+        {
+            public string id;
+            public string text;
+        }
         delegate void AppendTextDelegate(Control ctrl, string s);
         AppendTextDelegate _textAppender;
         Socket mainSock;
@@ -39,7 +45,9 @@ namespace MultiChatServer {
                     //AppendText(txtHistory, addr.ToString());
                     string[] ip = addr.ToString().Split('.');
                     // ! A, B, C 클래스 제외
-                    if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10") || ip[0].Equals("169") || ip[0].Equals("127") || ip[0].Equals("0") || ip[0].Equals("224") || ip[0].Equals("240") || ip[0].Equals("239"))
+                    if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10") || ip[0].Equals("169") || ip[0].Equals("127")
+                        || ip[0].Equals("0") || ip[0].Equals("224") || ip[0].Equals("240") || ip[0].Equals("239") || (ip[0].Equals("192")
+                        || ip[1] .Equals("168")) || (ip[0].Equals("172") && Convert.ToInt32(ip[1]) >=16 && Convert.ToInt32(ip[1]) <= 31) )
                     {
                         //AppendText(txtHistory, "포함");
                     }
@@ -81,7 +89,9 @@ namespace MultiChatServer {
                     //AppendText(txtHistory, addr.ToString());
                     string[] ip = addr.ToString().Split('.');
                     // ! A, B, C 클래스 제외
-                    if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10") || ip[0].Equals("169") || ip[0].Equals("127") || ip[0].Equals("0") || ip[0].Equals("224") || ip[0].Equals("240") || ip[0].Equals("239"))
+                    if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10") || ip[0].Equals("169") || ip[0].Equals("127")
+                        || ip[0].Equals("0") || ip[0].Equals("224") || ip[0].Equals("240") || ip[0].Equals("239") || (ip[0].Equals("192")
+                        || ip[1].Equals("168")) || (ip[0].Equals("172") && Convert.ToInt32(ip[1]) >= 16 && Convert.ToInt32(ip[1]) <= 31))
                     {
                         //AppendText(txtHistory, "포함");
                     }
@@ -137,27 +147,33 @@ namespace MultiChatServer {
                 obj.WorkingSocket.Close();
                 return;
             }
-
+            Console.WriteLine(obj.Buffer);
             // 텍스트로 변환한다.
             string text = Encoding.UTF8.GetString(obj.Buffer);
-
+            Console.WriteLine(text);
             // : 기준으로 짜른다.
             // tokens[0] - 보낸 사람 ID
             // tokens[1] - 보낸 메세지
-            string[] tokens = text.Split('`');
-            string id = tokens[0];
-            string msg = tokens[1];
+            //string[] tokens = text.Split('`');
+            //string id = tokens[0];
+            //string msg = tokens[1];
+
+            DataForm data = new DataForm();
+            data  = JsonConvert.DeserializeObject<DataForm>(text);
 
             // 텍스트박스에 추가해준다.
             // 비동기식으로 작업하기 때문에 폼의 UI 스레드에서 작업을 해줘야 한다.
             // 따라서 대리자를 통해 처리한다.
-            AppendText(txtHistory, string.Format("[받음]{0}: {1}", id, msg));
+            AppendText(txtHistory, string.Format("[받음]{0}: {1}", data.id, data.text));
             
             // for을 통해 "역순"으로 클라이언트에게 데이터를 보낸다.
             for (int i = connectedClients.Count - 1; i >= 0; i--) {
                 Socket socket = connectedClients[i];
                 if (socket != obj.WorkingSocket) {
-                    try { socket.Send(obj.Buffer); }
+                    try {
+                        string request = JsonConvert.SerializeObject(data);
+                        socket.Send(obj.Buffer);
+                    }
                     catch {
                         // 오류 발생하면 전송 취소하고 리스트에서 삭제한다.
                         try { socket.Dispose(); } catch { }
@@ -183,13 +199,19 @@ namespace MultiChatServer {
             // 보낼 텍스트
             string tts = txtTTS.Text.Trim();
             if (string.IsNullOrEmpty(tts)) {
-                MsgBoxHelper.Warn("텍스트가 입력되지 않았습니다!");
+                MsgBoxHelper.Warn("공지사항이 입력되지 않았습니다!");
                 txtTTS.Focus();
                 return;
             }
-            
+
+            DataForm dataForm = new DataForm();
+            dataForm.id = "Server";
+            dataForm.text = tts;
+            string request = JsonConvert.SerializeObject(dataForm);
+            byte[] bDts = Encoding.UTF8.GetBytes(request);
+
             // 문자열을 utf8 형식의 바이트로 변환한다.
-            byte[] bDts = Encoding.UTF8.GetBytes("Server" + '`' + tts);
+            // byte[] bDts = Encoding.UTF8.GetBytes("Server" + '`' + tts);
 
             // 연결된 모든 클라이언트에게 전송한다.
             for (int i = connectedClients.Count - 1; i >= 0; i--) {

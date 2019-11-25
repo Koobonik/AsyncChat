@@ -3,9 +3,18 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace MultiChatClient {
     public partial class ChatForm_Client : Form {
+
+        class DataForm
+        {
+            public string id;
+            public string text;
+        }
+        
+
         delegate void AppendTextDelegate(Control ctrl, string s);
         AppendTextDelegate _textAppender;
         Socket mainSock;
@@ -85,24 +94,22 @@ namespace MultiChatClient {
 
             // 텍스트로 변환한다.
             string text = Encoding.UTF8.GetString(obj.Buffer);
-
+            DataForm data = new DataForm();
+            data = JsonConvert.DeserializeObject<DataForm>(text);
             // : 기준으로 짜른다.
             // tokens[0] - 보낸 사람 ID
             // tokens[1] - 보낸 메세지
-            string[] tokens = text.Split('`');
-            string id = tokens[0];
-            string msg = tokens[1];
 
             // 텍스트박스에 추가해준다.
             // 비동기식으로 작업하기 때문에 폼의 UI 스레드에서 작업을 해줘야 한다.
             // 따라서 대리자를 통해 처리한다.
-            if (id.Equals("Server"))
+            if (data.id.Equals("Server"))
             {
-                AppendText(txtHistory, string.Format("[공지사항이 등록되었습니다.] : {0}", msg));
+                AppendText(txtHistory, string.Format("[공지사항이 등록되었습니다.] : {0}", data.text));
             }
             else
             {
-                AppendText(txtHistory, string.Format("[받음]{0} : {1}", id, msg));
+                AppendText(txtHistory, string.Format("[받음]{0} : {1}", data.id, data.text));
             }
             
             
@@ -132,13 +139,19 @@ namespace MultiChatClient {
             // ID 와 메세지를 담도록 만든다.
 
             // 문자열을 utf8 형식의 바이트로 변환한다.
-            byte[] bDts = Encoding.UTF8.GetBytes(nameID + '`' + tts);
+            DataForm dataForm = new DataForm();
+            dataForm.id = nameID;
+            dataForm.text = tts;
+            string request = JsonConvert.SerializeObject(dataForm);
+            byte[] bDts = Encoding.UTF8.GetBytes(request);
+            // Encoding.UTF8.GetBytes(nameID + '`' + tts);
+
 
             // 서버에 전송한다.
             mainSock.Send(bDts);
 
             // 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
-            AppendText(txtHistory, string.Format("[나]{0} : {1}", nameID, tts));
+            AppendText(txtHistory, string.Format("[나]{0} : {1}", dataForm.id, dataForm.text));
             txtTTS.Clear();
         }
 
