@@ -27,12 +27,12 @@
             this.txtTTS = new System.Windows.Forms.TextBox();
             this.lblTTS = new System.Windows.Forms.Label();
             this.lblAddress = new System.Windows.Forms.Label();
-            this.txtAddress = new System.Windows.Forms.TextBox();
             this.btnConnect = new System.Windows.Forms.Button();
             this.txtHistory = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.lblPortNumber = new System.Windows.Forms.Label();
             this.txtID = new System.Windows.Forms.TextBox();
+            this.txtAddress = new System.Windows.Forms.TextBox();
             this.tblMainLayout.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -100,17 +100,6 @@
             this.lblAddress.Text = "서버 주소";
             this.lblAddress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // txtAddress
-            // 
-            this.txtAddress.BackColor = System.Drawing.Color.White;
-            this.txtAddress.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtAddress.Location = new System.Drawing.Point(112, 10);
-            this.txtAddress.Margin = new System.Windows.Forms.Padding(4, 2, 3, 3);
-            this.txtAddress.MaxLength = 260;
-            this.txtAddress.Name = "txtAddress";
-            this.txtAddress.Size = new System.Drawing.Size(161, 27);
-            this.txtAddress.TabIndex = 1;
-            // 
             // btnConnect
             // 
             this.btnConnect.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -170,13 +159,24 @@
             this.txtID.Size = new System.Drawing.Size(93, 27);
             this.txtID.TabIndex = 3;
             // 
-            // ChatForm
+            // txtAddress
+            // 
+            this.txtAddress.BackColor = System.Drawing.Color.White;
+            this.txtAddress.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtAddress.Location = new System.Drawing.Point(112, 10);
+            this.txtAddress.Margin = new System.Windows.Forms.Padding(4, 2, 3, 3);
+            this.txtAddress.MaxLength = 260;
+            this.txtAddress.Name = "txtAddress";
+            this.txtAddress.Size = new System.Drawing.Size(161, 27);
+            this.txtAddress.TabIndex = 1;
+            // 
+            // ChatForm_Client
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(584, 441);
             this.Controls.Add(this.tblMainLayout);
             this.Font = new System.Drawing.Font("맑은 고딕", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.Name = "ChatForm";
+            this.Name = "ChatForm_Client";
             this.Text = "Multi Chat Client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ChatForm_FormClosing);
             this.Load += new System.EventHandler(this.OnFormLoaded);
@@ -192,12 +192,12 @@
         private System.Windows.Forms.TextBox txtTTS;
         private System.Windows.Forms.Label lblTTS;
         private System.Windows.Forms.Label lblAddress;
-        private System.Windows.Forms.TextBox txtAddress;
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.TextBox txtHistory;
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.Label lblPortNumber;
         private System.Windows.Forms.TextBox txtID;
+        private System.Windows.Forms.TextBox txtAddress;
     }
 }
 

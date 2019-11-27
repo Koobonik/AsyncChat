@@ -2,16 +2,24 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
 namespace MultiChatClient {
+
+    
     public partial class ChatForm_Client : Form {
+        
+        
 
         class DataForm
         {
+            public string req;
+            public string res;
             public string id;
             public string text;
+
         }
         
 
@@ -19,6 +27,7 @@ namespace MultiChatClient {
         AppendTextDelegate _textAppender;
         Socket mainSock;
         IPAddress thisAddress;
+        string broadcastIPAddress;
         string nameID;
 
         public ChatForm_Client() {
@@ -37,19 +46,57 @@ namespace MultiChatClient {
 
         void OnFormLoaded(object sender, EventArgs e) {
 
+            IPHostEntry he = Dns.GetHostEntry(Dns.GetHostName());
+            // 처음으로 발견되는 ipv4 주소를 사용한다.
+            foreach (IPAddress addr in he.AddressList)
+            {
+                if (addr.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    //AppendText(txtHistory, addr.ToString());
+                    string[] ip = addr.ToString().Split('.');
+                    // ! A, B, C 클래스 제외
+                    if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10") || ip[0].Equals("169") || ip[0].Equals("127")
+                        || ip[0].Equals("0") || ip[0].Equals("224") || ip[0].Equals("240") || ip[0].Equals("239") || (ip[0].Equals("192")
+                        || ip[1].Equals("168")) || (ip[0].Equals("172") && Convert.ToInt32(ip[1]) >= 16 && Convert.ToInt32(ip[1]) <= 31))
+                    {
+                        //AppendText(txtHistory, "포함");
+                    }
+                    else
+                    {
+                        thisAddress = IPAddress.Parse(addr.ToString());
+                        Console.WriteLine("아이피 주소 : "+IPAddress.Parse(addr.ToString()));
+                        string[] hi = thisAddress.ToString().Split('.');
+                        for (int i = 0; i<3; i++)
+                        {
+                            // 이후 브로드 캐스트에 쓰일 ip 주소
+                            broadcastIPAddress += hi[i] + ".";
+                            Console.WriteLine(broadcastIPAddress);
+                        }
+                        Console.WriteLine(broadcastIPAddress);
+                        txtAddress.Text = thisAddress.ToString();
+                    }
+                }
+            }
+
             if (thisAddress == null)
             {
                 // 로컬호스트 주소를 사용한다.
                 thisAddress = IPAddress.Loopback;
+                // broadcast ping
                 txtAddress.Text = thisAddress.ToString();
             }
             else
             {
                 thisAddress = IPAddress.Parse(txtAddress.Text);
             }
+
+            // ThreadPool.QueueUserWorkItem(OnConnectToServer);
         }
 
+
+
         void OnConnectToServer(object sender, EventArgs e) {
+
             if (mainSock.Connected) {
                 MsgBoxHelper.Error("이미 연결되어 있습니다!");
                 return;
@@ -59,24 +106,53 @@ namespace MultiChatClient {
 
             nameID = txtID.Text; //ID
 
-            AppendText(txtHistory, string.Format("서버: @{0}, port: 15000, ID: @{1}", 
-                txtAddress.Text, nameID));
-            try {
-                // 여기서 브로드 캐스트 한번 해줘야 함
-                mainSock.Connect(txtAddress.Text, port);
-            }
-            catch (Exception ex) {
-                MsgBoxHelper.Error("연결에 실패했습니다!\n오류 내용: {0}", MessageBoxButtons.OK, ex.Message);
-                return;
-            }
+            AppendText(txtHistory, string.Format("서버: @{0}, port: 15000, ID: @{1}", txtAddress.Text, nameID));
+            for (int i = 191; i < 195; i++)
+            {
+                try
+                {
+                    // 여기서 브로드 캐스트 한번 해줘야 함
+                    // mainSock.Connect(txtAddress.Text, port);
+                    IPEndPoint serverEP = new IPEndPoint(IPAddress.Parse(broadcastIPAddress+i), port);
+                    Console.WriteLine("serverEP : "+serverEP.ToString());
+                    TimeSpan timeSpan = new TimeSpan(50);
+                    //SocketExtensions.Connect(mainSock, serverEP, timeSpan);
+                    IAsyncResult result = mainSock.BeginConnect(broadcastIPAddress + i, port, null, null);
 
+                    bool success = result.AsyncWaitHandle.WaitOne(50, true);
+                    Console.WriteLine(success);
+                    if (mainSock.Connected)
+                    {
+                        mainSock.EndConnect(result);
+                    }
+                    else
+                    {
+                        // NOTE, MUST CLOSE THE SOCKET
+
+                        mainSock.Close();
+                        throw new ApplicationException("Failed to connect server.");
+                    }
+
+
+                    // 밑에는 원래 코드
+                    //mainSock.Connect(broadcastIPAddress + i, port);
+                    Console.WriteLine("이거 보이면 연결 잘 된겨 브로드 캐스트 아이피 뽑기 : "+broadcastIPAddress  + i);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("연결 실패 ");
+                    //MsgBoxHelper.Error("연결에 실패했습니다!\n오류 내용: {0}", MessageBoxButtons.OK, ex.Message);
+                    // return;
+                }
+            }
             // 연결 완료되었다는 메세지를 띄워준다.
             AppendText(txtHistory, "서버와 연결되었습니다.");
 
             // 연결 완료, 서버에서 데이터가 올 수 있으므로 수신 대기한다.
             AsyncObject obj = new AsyncObject(4096);
-            obj.WorkingSocket = mainSock;
-            mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
+            //obj.WorkingSocket = mainSock;
+            //mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
         }
         
         void DataReceived(IAsyncResult ar) {
@@ -158,8 +234,16 @@ namespace MultiChatClient {
         private void ChatForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (mainSock!=null) {
-                mainSock.Disconnect(false);
-                mainSock.Close();
+                try
+                {
+                    mainSock.Disconnect(false);
+                    mainSock.Close();
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("서버 연결 안하고 닫힘");
+                }
+                
             }
 
         }

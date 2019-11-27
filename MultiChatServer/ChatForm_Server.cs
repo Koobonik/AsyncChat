@@ -10,6 +10,8 @@ namespace MultiChatServer {
 
         class DataForm
         {
+            public string req;
+            public string res;
             public string id;
             public string text;
         }

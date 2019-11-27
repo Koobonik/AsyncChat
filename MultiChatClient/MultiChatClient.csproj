@@ -54,6 +54,7 @@
     <Compile Include="ChatForm_Client.Designer.cs">
       <DependentUpon>ChatForm_Client.cs</DependentUpon>
     </Compile>
+    <Compile Include="Class1.cs" />
     <Compile Include="MsgBoxHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
