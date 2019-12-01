@@ -28,6 +28,8 @@ namespace MultiChatClient {
         Socket mainSock;
         IPAddress thisAddress;
         string broadcastIPAddress;
+        Socket[] socket = new Socket[253];
+        IPAddress[] broadcastIPAddresses = new IPAddress[253];
         string nameID;
 
         public ChatForm_Client() {
@@ -57,7 +59,7 @@ namespace MultiChatClient {
                     // ! A, B, C 클래스 제외
                     if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10") || ip[0].Equals("169") || ip[0].Equals("127")
                         || ip[0].Equals("0") || ip[0].Equals("224") || ip[0].Equals("240") || ip[0].Equals("239") || (ip[0].Equals("192")
-                        || ip[1].Equals("168")) || (ip[0].Equals("172") && Convert.ToInt32(ip[1]) >= 16 && Convert.ToInt32(ip[1]) <= 31))
+                        && ip[1].Equals("168")) || (ip[0].Equals("172") && Convert.ToInt32(ip[1]) >= 16 && Convert.ToInt32(ip[1]) <= 31))
                     {
                         //AppendText(txtHistory, "포함");
                     }
@@ -72,6 +74,12 @@ namespace MultiChatClient {
                             broadcastIPAddress += hi[i] + ".";
                             Console.WriteLine(broadcastIPAddress);
                         }
+                        for(int i = 0; i<253; i++)
+                        {
+                            broadcastIPAddresses[i] = IPAddress.Parse( broadcastIPAddress + (i + 1));
+                        }
+
+                        Console.WriteLine(broadcastIPAddresses[0]);
                         Console.WriteLine(broadcastIPAddress);
                         txtAddress.Text = thisAddress.ToString();
                     }
@@ -92,8 +100,7 @@ namespace MultiChatClient {
 
             // ThreadPool.QueueUserWorkItem(OnConnectToServer);
         }
-
-
+        
 
         void OnConnectToServer(object sender, EventArgs e) {
 
@@ -107,52 +114,52 @@ namespace MultiChatClient {
             nameID = txtID.Text; //ID
 
             AppendText(txtHistory, string.Format("서버: @{0}, port: 15000, ID: @{1}", txtAddress.Text, nameID));
-            for (int i = 191; i < 195; i++)
+            try
             {
-                try
-                {
-                    // 여기서 브로드 캐스트 한번 해줘야 함
-                    // mainSock.Connect(txtAddress.Text, port);
-                    IPEndPoint serverEP = new IPEndPoint(IPAddress.Parse(broadcastIPAddress+i), port);
-                    Console.WriteLine("serverEP : "+serverEP.ToString());
-                    TimeSpan timeSpan = new TimeSpan(50);
-                    //SocketExtensions.Connect(mainSock, serverEP, timeSpan);
-                    IAsyncResult result = mainSock.BeginConnect(broadcastIPAddress + i, port, null, null);
-
-                    bool success = result.AsyncWaitHandle.WaitOne(50, true);
-                    Console.WriteLine(success);
-                    if (mainSock.Connected)
-                    {
-                        mainSock.EndConnect(result);
-                    }
-                    else
-                    {
-                        // NOTE, MUST CLOSE THE SOCKET
-
-                        mainSock.Close();
-                        throw new ApplicationException("Failed to connect server.");
-                    }
-
-
-                    // 밑에는 원래 코드
-                    //mainSock.Connect(broadcastIPAddress + i, port);
-                    Console.WriteLine("이거 보이면 연결 잘 된겨 브로드 캐스트 아이피 뽑기 : "+broadcastIPAddress  + i);
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("연결 실패 ");
-                    //MsgBoxHelper.Error("연결에 실패했습니다!\n오류 내용: {0}", MessageBoxButtons.OK, ex.Message);
-                    // return;
-                }
+                // 여기서 브로드 캐스트 한번 해줘야 함
+                mainSock.Connect(txtAddress.Text, port);
+                // 밑에는 원래 코드
+                //mainSock.Connect(broadcastIPAddress + i, port);
+                //Console.WriteLine("이거 보이면 연결 잘 된겨 브로드 캐스트 아이피 뽑기 : "+broadcastIPAddress  + i);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("연결 실패 ");
+                MsgBoxHelper.Error("연결에 실패했습니다!\n오류 내용: {0}", MessageBoxButtons.OK, ex.Message);
             }
             // 연결 완료되었다는 메세지를 띄워준다.
             AppendText(txtHistory, "서버와 연결되었습니다.");
 
             // 연결 완료, 서버에서 데이터가 올 수 있으므로 수신 대기한다.
             AsyncObject obj = new AsyncObject(4096);
-            //obj.WorkingSocket = mainSock;
-            //mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
+            obj.WorkingSocket = mainSock;
+            mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
+        }
+
+        void broadcastPing(IAsyncResult ar)
+        {
+            Console.WriteLine("여기1");
+            AsyncObject obj = (AsyncObject)ar.AsyncState;
+            Console.WriteLine("여기2");
+            try
+            {
+                Console.WriteLine("여기3");
+                obj.WorkingSocket.Connect(obj.iPAddress, 15000);
+                //mainSock.Connect(obj.WorkingSocke, 15000);
+                AppendText(txtHistory, "서버와 연결되었습니다.");
+
+                // 연결 완료, 서버에서 데이터가 올 수 있으므로 수신 대기한다.
+                //AsyncObject obj = new AsyncObject(4096);
+                obj.WorkingSocket = mainSock;
+                mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
+                Console.WriteLine("여기ㅁㄴㅇ");
+
+            }
+            catch
+            {
+                Console.WriteLine("에러");
+                return;
+            }
         }
         
         void DataReceived(IAsyncResult ar) {

@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Net;
 using System.Net.Sockets;
-
 namespace MultiChatClient {
     // 비동기 작업에서 사용하는 소켓과 해당 작업에 대한 데이터 버퍼를 저장하는 클래스
     public class AsyncObject {
         public byte[] Buffer;
         public Socket WorkingSocket;
+        public IPAddress iPAddress;
         public readonly int BufferSize;
         public AsyncObject(int bufferSize) {
             BufferSize = bufferSize;

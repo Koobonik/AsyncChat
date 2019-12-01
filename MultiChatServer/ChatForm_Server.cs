@@ -49,7 +49,7 @@ namespace MultiChatServer {
                     // ! A, B, C 클래스 제외
                     if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10") || ip[0].Equals("169") || ip[0].Equals("127")
                         || ip[0].Equals("0") || ip[0].Equals("224") || ip[0].Equals("240") || ip[0].Equals("239") || (ip[0].Equals("192")
-                        || ip[1] .Equals("168")) || (ip[0].Equals("172") && Convert.ToInt32(ip[1]) >=16 && Convert.ToInt32(ip[1]) <= 31) )
+                        && ip[1] .Equals("168")) || (ip[0].Equals("172") && Convert.ToInt32(ip[1]) >=16 && Convert.ToInt32(ip[1]) <= 31) )
                     {
                         //AppendText(txtHistory, "포함");
                     }
@@ -93,7 +93,7 @@ namespace MultiChatServer {
                     // ! A, B, C 클래스 제외
                     if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10") || ip[0].Equals("169") || ip[0].Equals("127")
                         || ip[0].Equals("0") || ip[0].Equals("224") || ip[0].Equals("240") || ip[0].Equals("239") || (ip[0].Equals("192")
-                        || ip[1].Equals("168")) || (ip[0].Equals("172") && Convert.ToInt32(ip[1]) >= 16 && Convert.ToInt32(ip[1]) <= 31))
+                        && ip[1].Equals("168")) || (ip[0].Equals("172") && Convert.ToInt32(ip[1]) >= 16 && Convert.ToInt32(ip[1]) <= 31))
                     {
                         //AppendText(txtHistory, "포함");
                     }
