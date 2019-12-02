@@ -11,7 +11,6 @@ namespace MultiChatClient {
     
     public partial class ChatForm_Client : Form {
         
-        
 
         class DataForm
         {
@@ -26,6 +25,7 @@ namespace MultiChatClient {
         delegate void AppendTextDelegate(Control ctrl, string s);
         AppendTextDelegate _textAppender;
         Socket mainSock;
+        Socket udpSock;
         IPAddress thisAddress;
         string broadcastIPAddress;
         Socket[] socket = new Socket[253];
@@ -33,9 +33,54 @@ namespace MultiChatClient {
         string nameID;
 
         public ChatForm_Client() {
+
+            
+
             InitializeComponent();
             mainSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
             _textAppender = new AppendTextDelegate(AppendText);
+            udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            _textAppender = new AppendTextDelegate(AppendText);
+
+            int recv = 0;
+            byte[] data = new byte[1024];
+            string input, stringData;
+
+            IPEndPoint serverEP = new IPEndPoint(IPAddress.Parse("210.123.255.193"), 15001);
+
+            Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+            EndPoint remoteEP = (EndPoint)sender;
+
+            string welcome = "hello, udp server?";
+            data = Encoding.UTF8.GetBytes(welcome);
+            client.SendTo(data, data.Length, SocketFlags.None, serverEP);
+
+            data = new byte[1024];
+            recv = client.ReceiveFrom(data, ref remoteEP);
+
+            Console.WriteLine("[first] Message received from {0}", remoteEP.ToString());
+            stringData = Encoding.UTF8.GetString(data, 0, recv);
+            Console.WriteLine(stringData);
+
+            //while (true)
+            //{
+            //    Console.Write("send data : ");
+            //    input = Console.ReadLine();
+            //    if (input == "exit")
+            //        break;
+
+            //    data = Encoding.UTF8.GetBytes(input);
+            //    client.SendTo(data, data.Length, SocketFlags.None, serverEP);
+
+            //    recv = client.ReceiveFrom(data, ref remoteEP);
+            //    stringData = Encoding.UTF8.GetString(data);
+            //    Console.WriteLine("received data : {0}", stringData);
+            //}
+
+            Console.WriteLine("Stopping client");
+            client.Close();
         }
 
         void AppendText(Control ctrl, string s) {
@@ -76,7 +121,24 @@ namespace MultiChatClient {
                         }
                         for(int i = 0; i<253; i++)
                         {
+
                             broadcastIPAddresses[i] = IPAddress.Parse( broadcastIPAddress + (i + 1));
+                        }
+                        // (1) UdpClient 객체 성성
+                        UdpClient udp = new UdpClient();
+
+                        // (2) Multicast 종단점 설정            
+                        IPEndPoint multicastEP = new IPEndPoint(IPAddress.Parse("210.123.255.193"), 15000);
+
+                        for (int i = 1; i <= 254; i++)
+                        {
+                            byte[] dgram = Encoding.ASCII.GetBytes("Msg#" + i);
+
+                            // (3) Multicast 그룹에 데이타그램 전송      
+                            udp.Send(dgram, dgram.Length, multicastEP);
+
+                            Console.WriteLine("Msg#" + i);
+                            //Thread.Sleep(1000);
                         }
 
                         Console.WriteLine(broadcastIPAddresses[0]);
@@ -116,10 +178,29 @@ namespace MultiChatClient {
             AppendText(txtHistory, string.Format("서버: @{0}, port: 15000, ID: @{1}", txtAddress.Text, nameID));
             try
             {
+                for(int i = 0; i < 253; i++)
+                {
+                    udpSock.Connect(broadcastIPAddresses[i], 15000);
+                    // 문자열을 utf8 형식의 바이트로 변환한다.
+                    DataForm dataForm = new DataForm();
+                    dataForm.id = nameID;
+                    dataForm.text = "hihihihi";
+                    string request = JsonConvert.SerializeObject(dataForm);
+                    byte[] bDts = Encoding.UTF8.GetBytes(request);
+                    // Encoding.UTF8.GetBytes(nameID + '`' + tts);
+
+
+                    // 서버에 전송한다.
+                    udpSock.Send(bDts);
+
+                    // 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
+                    // AppendText(txtHistory, string.Format("[나]{0} : {1}", dataForm.id, dataForm.text));
+                    Console.WriteLine(broadcastIPAddresses[i]);
+                }
                 // 여기서 브로드 캐스트 한번 해줘야 함
-                mainSock.Connect(txtAddress.Text, port);
+                //mainSock.Connect(txtAddress.Text, port);
                 // 밑에는 원래 코드
-                //mainSock.Connect(broadcastIPAddress + i, port);
+                mainSock.Connect(broadcastIPAddresses[192], port);
                 //Console.WriteLine("이거 보이면 연결 잘 된겨 브로드 캐스트 아이피 뽑기 : "+broadcastIPAddress  + i);
             }
             catch (Exception ex)
@@ -133,6 +214,7 @@ namespace MultiChatClient {
             // 연결 완료, 서버에서 데이터가 올 수 있으므로 수신 대기한다.
             AsyncObject obj = new AsyncObject(4096);
             obj.WorkingSocket = mainSock;
+            //obj.WorkingSocket = udpSock;
             mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
         }
 
@@ -263,6 +345,11 @@ namespace MultiChatClient {
                 OnSendData(sender, e);
 
             }
+        }
+
+        private void txtHistory_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

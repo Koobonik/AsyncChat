@@ -27,12 +27,12 @@
             this.txtTTS = new System.Windows.Forms.TextBox();
             this.lblTTS = new System.Windows.Forms.Label();
             this.lblAddress = new System.Windows.Forms.Label();
+            this.txtAddress = new System.Windows.Forms.TextBox();
             this.btnConnect = new System.Windows.Forms.Button();
             this.txtHistory = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.lblPortNumber = new System.Windows.Forms.Label();
             this.txtID = new System.Windows.Forms.TextBox();
-            this.txtAddress = new System.Windows.Forms.TextBox();
             this.tblMainLayout.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,18 +61,18 @@
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.tblMainLayout.Size = new System.Drawing.Size(584, 441);
+            this.tblMainLayout.Size = new System.Drawing.Size(550, 426);
             this.tblMainLayout.TabIndex = 2;
             // 
             // txtTTS
             // 
             this.tblMainLayout.SetColumnSpan(this.txtTTS, 3);
             this.txtTTS.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtTTS.Location = new System.Drawing.Point(112, 403);
+            this.txtTTS.Location = new System.Drawing.Point(112, 388);
             this.txtTTS.Margin = new System.Windows.Forms.Padding(4, 2, 3, 3);
             this.txtTTS.MaxLength = 260;
             this.txtTTS.Name = "txtTTS";
-            this.txtTTS.Size = new System.Drawing.Size(361, 27);
+            this.txtTTS.Size = new System.Drawing.Size(327, 27);
             this.txtTTS.TabIndex = 7;
             this.txtTTS.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtTTS_KeyPress);
             // 
@@ -80,7 +80,7 @@
             // 
             this.lblTTS.AutoSize = true;
             this.lblTTS.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblTTS.Location = new System.Drawing.Point(9, 402);
+            this.lblTTS.Location = new System.Drawing.Point(9, 387);
             this.lblTTS.Margin = new System.Windows.Forms.Padding(1);
             this.lblTTS.Name = "lblTTS";
             this.lblTTS.Size = new System.Drawing.Size(98, 30);
@@ -100,10 +100,21 @@
             this.lblAddress.Text = "서버 주소";
             this.lblAddress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // txtAddress
+            // 
+            this.txtAddress.BackColor = System.Drawing.Color.White;
+            this.txtAddress.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtAddress.Location = new System.Drawing.Point(112, 10);
+            this.txtAddress.Margin = new System.Windows.Forms.Padding(4, 2, 3, 3);
+            this.txtAddress.MaxLength = 260;
+            this.txtAddress.Name = "txtAddress";
+            this.txtAddress.Size = new System.Drawing.Size(127, 27);
+            this.txtAddress.TabIndex = 1;
+            // 
             // btnConnect
             // 
             this.btnConnect.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnConnect.Location = new System.Drawing.Point(477, 9);
+            this.btnConnect.Location = new System.Drawing.Point(443, 9);
             this.btnConnect.Margin = new System.Windows.Forms.Padding(1);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(98, 30);
@@ -122,13 +133,14 @@
             this.txtHistory.Multiline = true;
             this.txtHistory.Name = "txtHistory";
             this.txtHistory.ReadOnly = true;
-            this.txtHistory.Size = new System.Drawing.Size(562, 355);
+            this.txtHistory.Size = new System.Drawing.Size(528, 340);
             this.txtHistory.TabIndex = 5;
+            this.txtHistory.TextChanged += new System.EventHandler(this.txtHistory_TextChanged);
             // 
             // btnSend
             // 
             this.btnSend.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnSend.Location = new System.Drawing.Point(477, 402);
+            this.btnSend.Location = new System.Drawing.Point(443, 387);
             this.btnSend.Margin = new System.Windows.Forms.Padding(1);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(98, 30);
@@ -141,7 +153,7 @@
             // 
             this.lblPortNumber.AutoSize = true;
             this.lblPortNumber.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblPortNumber.Location = new System.Drawing.Point(277, 9);
+            this.lblPortNumber.Location = new System.Drawing.Point(243, 9);
             this.lblPortNumber.Margin = new System.Windows.Forms.Padding(1);
             this.lblPortNumber.Name = "lblPortNumber";
             this.lblPortNumber.Size = new System.Drawing.Size(98, 30);
@@ -152,28 +164,17 @@
             // txtID
             // 
             this.txtID.Dock = System.Windows.Forms.DockStyle.Right;
-            this.txtID.Location = new System.Drawing.Point(380, 10);
+            this.txtID.Location = new System.Drawing.Point(346, 10);
             this.txtID.Margin = new System.Windows.Forms.Padding(4, 2, 3, 3);
             this.txtID.MaxLength = 5;
             this.txtID.Name = "txtID";
             this.txtID.Size = new System.Drawing.Size(93, 27);
             this.txtID.TabIndex = 3;
             // 
-            // txtAddress
-            // 
-            this.txtAddress.BackColor = System.Drawing.Color.White;
-            this.txtAddress.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtAddress.Location = new System.Drawing.Point(112, 10);
-            this.txtAddress.Margin = new System.Windows.Forms.Padding(4, 2, 3, 3);
-            this.txtAddress.MaxLength = 260;
-            this.txtAddress.Name = "txtAddress";
-            this.txtAddress.Size = new System.Drawing.Size(161, 27);
-            this.txtAddress.TabIndex = 1;
-            // 
             // ChatForm_Client
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(584, 441);
+            this.ClientSize = new System.Drawing.Size(550, 426);
             this.Controls.Add(this.tblMainLayout);
             this.Font = new System.Drawing.Font("맑은 고딕", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.Name = "ChatForm_Client";

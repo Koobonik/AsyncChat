@@ -5,9 +5,13 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using System.Threading;
+
 namespace MultiChatServer {
     public partial class ChatForm_Server : Form {
 
+
+        
         class DataForm
         {
             public string req;
@@ -18,15 +22,69 @@ namespace MultiChatServer {
         delegate void AppendTextDelegate(Control ctrl, string s);
         AppendTextDelegate _textAppender;
         Socket mainSock;
+        Socket udpSock;
         IPAddress thisAddress;
         List<Socket> connectedClients;
+        
+        void asyncConnectClient()
+        {
+            
+
+            int recv = 0;
+            byte[] data = new byte[1024];
+
+            IPEndPoint ep = new IPEndPoint(IPAddress.Any, 15001);
+            Socket server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            server.Bind(ep);
+
+            Console.WriteLine("클라이언트 기다리는 중");
+            
+            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+            EndPoint remoteEP = (EndPoint)sender;
+
+            recv = server.ReceiveFrom(data, ref remoteEP);
+
+            Console.WriteLine("[first] Message received from {0}", remoteEP.ToString());
+            Console.WriteLine("[first] received data : {0}", Encoding.UTF8.GetString(data, 0, recv));
+
+            string welcome = "Welcome to udp server";
+            data = Encoding.UTF8.GetBytes(welcome);
+            server.SendTo(data, remoteEP);
+            AppendText(txtHistory, string.Format("뭔가 되고있어"));
+            //while (true)
+            //{
+            //    data = new byte[1024];
+            //    recv = server.ReceiveFrom(data, ref remoteEP);
+            //    string recvData = Encoding.UTF8.GetString(data, 0, recv);
+            //    Console.WriteLine("received data : {0}", recvData);
+
+            //    server.SendTo(Encoding.UTF8.GetBytes(recvData), remoteEP);
+            //    Console.WriteLine("send data : {0}", Encoding.UTF8.GetString(data, 0, recv));
+            //    Console.WriteLine("");
+            //}
+
+            server.Close();
+            Thread th = new Thread(asyncConnectClient);
+            th.IsBackground = true;
+            th.Start();
+        }
 
         public ChatForm_Server() {
+
+            
+
+
             InitializeComponent();
             mainSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+            udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _textAppender = new AppendTextDelegate(AppendText);
             connectedClients = new List<Socket>();
             BeginStartServer(null, null);
+            Thread th = new Thread(asyncConnectClient);
+            th.IsBackground = true;
+            th.Start();
+
+
         }
 
         void AppendText(Control ctrl, string s) {
@@ -107,11 +165,16 @@ namespace MultiChatServer {
             // 소켓을 열어둔다.
 
             IPEndPoint serverEP = new IPEndPoint(thisAddress, port);
+
+            udpSock.Bind(serverEP);
+            //udpSock.Listen(10);
             mainSock.Bind(serverEP);
             mainSock.Listen(10);
 
             AppendText(txtHistory, string.Format("서버 시작: @{0}", serverEP));
+
             // 비동기적으로 클라이언트의 연결 요청을 받는다.
+            //udpSock.BeginAccept(AcceptCallback, null);
             mainSock.BeginAccept(AcceptCallback, null);
         }
 
