@@ -42,45 +42,7 @@ namespace MultiChatClient {
             udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _textAppender = new AppendTextDelegate(AppendText);
 
-            int recv = 0;
-            byte[] data = new byte[1024];
-            string input, stringData;
 
-            IPEndPoint serverEP = new IPEndPoint(IPAddress.Parse("210.123.255.193"), 15001);
-
-            Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
-            EndPoint remoteEP = (EndPoint)sender;
-
-            string welcome = "hello, udp server?";
-            data = Encoding.UTF8.GetBytes(welcome);
-            client.SendTo(data, data.Length, SocketFlags.None, serverEP);
-
-            data = new byte[1024];
-            recv = client.ReceiveFrom(data, ref remoteEP);
-
-            Console.WriteLine("[first] Message received from {0}", remoteEP.ToString());
-            stringData = Encoding.UTF8.GetString(data, 0, recv);
-            Console.WriteLine(stringData);
-
-            //while (true)
-            //{
-            //    Console.Write("send data : ");
-            //    input = Console.ReadLine();
-            //    if (input == "exit")
-            //        break;
-
-            //    data = Encoding.UTF8.GetBytes(input);
-            //    client.SendTo(data, data.Length, SocketFlags.None, serverEP);
-
-            //    recv = client.ReceiveFrom(data, ref remoteEP);
-            //    stringData = Encoding.UTF8.GetString(data);
-            //    Console.WriteLine("received data : {0}", stringData);
-            //}
-
-            Console.WriteLine("Stopping client");
-            client.Close();
         }
 
         void AppendText(Control ctrl, string s) {
@@ -123,27 +85,16 @@ namespace MultiChatClient {
                         {
 
                             broadcastIPAddresses[i] = IPAddress.Parse( broadcastIPAddress + (i + 1));
+                            Thread th = new Thread(broadcastPing);
+                            th.IsBackground = true;
+                            th.Start(broadcastIPAddresses[i]);
                         }
-                        // (1) UdpClient 객체 성성
-                        UdpClient udp = new UdpClient();
-
-                        // (2) Multicast 종단점 설정            
-                        IPEndPoint multicastEP = new IPEndPoint(IPAddress.Parse("210.123.255.193"), 15000);
-
-                        for (int i = 1; i <= 254; i++)
-                        {
-                            byte[] dgram = Encoding.ASCII.GetBytes("Msg#" + i);
-
-                            // (3) Multicast 그룹에 데이타그램 전송      
-                            udp.Send(dgram, dgram.Length, multicastEP);
-
-                            Console.WriteLine("Msg#" + i);
-                            //Thread.Sleep(1000);
-                        }
+                        
 
                         Console.WriteLine(broadcastIPAddresses[0]);
                         Console.WriteLine(broadcastIPAddress);
                         txtAddress.Text = thisAddress.ToString();
+                        
                     }
                 }
             }
@@ -218,30 +169,60 @@ namespace MultiChatClient {
             mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
         }
 
-        void broadcastPing(IAsyncResult ar)
+        void broadcastPing(object ip)
         {
-            Console.WriteLine("여기1");
-            AsyncObject obj = (AsyncObject)ar.AsyncState;
-            Console.WriteLine("여기2");
-            try
-            {
-                Console.WriteLine("여기3");
-                obj.WorkingSocket.Connect(obj.iPAddress, 15000);
-                //mainSock.Connect(obj.WorkingSocke, 15000);
-                AppendText(txtHistory, "서버와 연결되었습니다.");
+            IPAddress ipArray = (IPAddress)ip;
+            Console.WriteLine("파라미터 아이피 보여줘 : "+ipArray);
 
-                // 연결 완료, 서버에서 데이터가 올 수 있으므로 수신 대기한다.
-                //AsyncObject obj = new AsyncObject(4096);
-                obj.WorkingSocket = mainSock;
-                mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
-                Console.WriteLine("여기ㅁㄴㅇ");
+            int recv = 0;
+            byte[] data = new byte[1024];
+            string input, stringData;
 
-            }
-            catch
+            IPEndPoint serverEP = new IPEndPoint(ipArray, 15001);
+
+            Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+            EndPoint remoteEP = (EndPoint)sender;
+
+            string welcome = "hello, udp server?";
+            data = Encoding.UTF8.GetBytes(welcome);
+            client.SendTo(data, data.Length, SocketFlags.None, serverEP);
+
+            data = new byte[1024];
+            recv = client.ReceiveFrom(data, ref remoteEP);
+            
+
+            Console.WriteLine("[first] Message received from {0}", remoteEP.ToString());
+            if (remoteEP != null)
             {
-                Console.WriteLine("에러");
+
                 return;
             }
+            stringData = Encoding.UTF8.GetString(data, 0, recv);
+            Console.WriteLine(stringData);
+
+            //while (true)
+            //{
+            //    Console.Write("send data : ");
+            //    input = Console.ReadLine();
+            //    if (input == "exit")
+            //        break;
+
+            //    data = Encoding.UTF8.GetBytes(input);
+            //    client.SendTo(data, data.Length, SocketFlags.None, serverEP);
+
+            //    recv = client.ReceiveFrom(data, ref remoteEP);
+            //    stringData = Encoding.UTF8.GetString(data);
+            //    Console.WriteLine("received data : {0}", stringData);
+            //}
+
+            Console.WriteLine("Stopping client");
+            client.Close();
+
+            Thread th = new Thread(broadcastPing);
+            th.IsBackground = true;
+            th.Start(broadcastIPAddresses);
         }
         
         void DataReceived(IAsyncResult ar) {
