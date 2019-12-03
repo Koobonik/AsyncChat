@@ -226,6 +226,7 @@ namespace MultiChatServer {
                 // 텍스트박스에 추가해준다.
                 // 비동기식으로 작업하기 때문에 폼의 UI 스레드에서 작업을 해줘야 한다.
                 // 따라서 대리자를 통해 처리한다.
+
                 AppendText(txtHistory, string.Format("[받음]{0}: {1}", data.id, data.text));
 
                 // for을 통해 "역순"으로 클라이언트에게 데이터를 보낸다.

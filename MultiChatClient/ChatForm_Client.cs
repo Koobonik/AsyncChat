@@ -28,6 +28,7 @@ namespace MultiChatClient {
         Socket mainSock;
         Socket udpSock;
         IPAddress thisAddress;
+        IPAddress serverIPAddress;
         string broadcastIPAddress;
         Socket[] socket = new Socket[253];
         IPAddress[] broadcastIPAddresses = new IPAddress[253];
@@ -140,7 +141,24 @@ namespace MultiChatClient {
             // 연결 버튼
 
             if (btnConnect.Text.Equals("연결끊기")){
-                mainSock.Close();
+
+                // 문자열을 utf8 형식의 바이트로 변환한다.
+                DataForm dataForm = new DataForm();
+                dataForm.id = nameID;
+                dataForm.req = "close";
+                dataForm.text = "연결을 종료했습니다.";
+                string request = JsonConvert.SerializeObject(dataForm);
+                byte[] bDts = Encoding.UTF8.GetBytes(request);
+                // Encoding.UTF8.GetBytes(nameID + '`' + tts);
+
+
+                // 서버에 전송한다.
+                mainSock.Send(bDts);
+
+                // 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
+                AppendText(txtHistory, string.Format("[연결을 종료합니다.]"));
+
+                mainSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
                 btnConnect.Text = "연결";
                 return;
             }
@@ -160,27 +178,8 @@ namespace MultiChatClient {
             AppendText(txtHistory, string.Format("서버: @{0}, port: 15000, ID: @{1}", txtAddress.Text, nameID));
             try
             {
-                for(int i = 0; i < 253; i++)
-                {
-                    udpSock.Connect(broadcastIPAddresses[i], 15000);
-                    // 문자열을 utf8 형식의 바이트로 변환한다.
-                    DataForm dataForm = new DataForm();
-                    dataForm.id = nameID;
-                    dataForm.text = "hihihihi";
-                    string request = JsonConvert.SerializeObject(dataForm);
-                    byte[] bDts = Encoding.UTF8.GetBytes(request);
-                    // Encoding.UTF8.GetBytes(nameID + '`' + tts);
-
-
-                    // 서버에 전송한다.
-                    udpSock.Send(bDts);
-
-                    // 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
-                    // AppendText(txtHistory, string.Format("[나]{0} : {1}", dataForm.id, dataForm.text));
-                    Console.WriteLine(broadcastIPAddresses[i]);
-                }
                 // 여기서 브로드 캐스트 한번 해줘야 함
-                //mainSock.Connect(txtAddress.Text, port);
+                mainSock.Connect(serverIPAddress, port);
                 // 밑에는 원래 코드
                 // mainSock.Connect(broadcastIPAddresses[192], port);
                 //Console.WriteLine("이거 보이면 연결 잘 된겨 브로드 캐스트 아이피 뽑기 : "+broadcastIPAddress  + i);
@@ -196,7 +195,6 @@ namespace MultiChatClient {
             // 연결 완료, 서버에서 데이터가 올 수 있으므로 수신 대기한다.
             AsyncObject obj = new AsyncObject(4096);
             obj.WorkingSocket = mainSock;
-            //obj.WorkingSocket = udpSock;
             mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
         }
 
@@ -230,6 +228,7 @@ namespace MultiChatClient {
                 //txtAddress.Text = ipArray.ToString();
                 AppendText(txtAddress, ipArray.ToString());
                 nameID = ipArray.ToString();
+                serverIPAddress = ipArray;
                 mainSock.Connect(ipArray, port);
                 // 연결 완료되었다는 메세지를 띄워준다.
                 AppendText(txtHistory, "서버와 연결되었습니다.");
