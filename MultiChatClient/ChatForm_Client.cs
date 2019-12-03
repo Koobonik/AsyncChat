@@ -31,6 +31,7 @@ namespace MultiChatClient {
         Socket[] socket = new Socket[253];
         IPAddress[] broadcastIPAddresses = new IPAddress[253];
         string nameID;
+        int port = 15000;  //고정
 
         public ChatForm_Client() {
 
@@ -122,7 +123,7 @@ namespace MultiChatClient {
                 return;
             }
 
-            int port=15000;  //고정
+            
 
             nameID = txtID.Text; //ID
 
@@ -151,7 +152,7 @@ namespace MultiChatClient {
                 // 여기서 브로드 캐스트 한번 해줘야 함
                 //mainSock.Connect(txtAddress.Text, port);
                 // 밑에는 원래 코드
-                mainSock.Connect(broadcastIPAddresses[192], port);
+                // mainSock.Connect(broadcastIPAddresses[192], port);
                 //Console.WriteLine("이거 보이면 연결 잘 된겨 브로드 캐스트 아이피 뽑기 : "+broadcastIPAddress  + i);
             }
             catch (Exception ex)
@@ -196,7 +197,15 @@ namespace MultiChatClient {
             Console.WriteLine("[first] Message received from {0}", remoteEP.ToString());
             if (remoteEP != null)
             {
+                mainSock.Connect(broadcastIPAddresses[192], port);
+                // 연결 완료되었다는 메세지를 띄워준다.
+                AppendText(txtHistory, "서버와 연결되었습니다.");
 
+                // 연결 완료, 서버에서 데이터가 올 수 있으므로 수신 대기한다.
+                AsyncObject obj = new AsyncObject(4096);
+                obj.WorkingSocket = mainSock;
+                //obj.WorkingSocket = udpSock;
+                mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
                 return;
             }
             stringData = Encoding.UTF8.GetString(data, 0, recv);
@@ -329,6 +338,16 @@ namespace MultiChatClient {
         }
 
         private void txtHistory_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tblMainLayout_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }
