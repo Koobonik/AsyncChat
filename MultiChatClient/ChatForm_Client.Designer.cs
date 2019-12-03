@@ -33,7 +33,7 @@
             this.btnSend = new System.Windows.Forms.Button();
             this.lblPortNumber = new System.Windows.Forms.Label();
             this.txtID = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.notificationBox = new System.Windows.Forms.Label();
             this.tblMainLayout.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,7 +54,7 @@
             this.tblMainLayout.Controls.Add(this.btnSend, 4, 3);
             this.tblMainLayout.Controls.Add(this.lblPortNumber, 2, 0);
             this.tblMainLayout.Controls.Add(this.txtID, 3, 0);
-            this.tblMainLayout.Controls.Add(this.label1, 0, 1);
+            this.tblMainLayout.Controls.Add(this.notificationBox, 0, 1);
             this.tblMainLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tblMainLayout.Location = new System.Drawing.Point(0, 0);
             this.tblMainLayout.Name = "tblMainLayout";
@@ -66,7 +66,6 @@
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.tblMainLayout.Size = new System.Drawing.Size(550, 402);
             this.tblMainLayout.TabIndex = 2;
-            this.tblMainLayout.Paint += new System.Windows.Forms.PaintEventHandler(this.tblMainLayout_Paint);
             // 
             // txtTTS
             // 
@@ -139,7 +138,6 @@
             this.txtHistory.ReadOnly = true;
             this.txtHistory.Size = new System.Drawing.Size(528, 284);
             this.txtHistory.TabIndex = 5;
-            this.txtHistory.TextChanged += new System.EventHandler(this.txtHistory_TextChanged);
             // 
             // btnSend
             // 
@@ -175,16 +173,16 @@
             this.txtID.Size = new System.Drawing.Size(93, 27);
             this.txtID.TabIndex = 3;
             // 
-            // label1
+            // notificationBox
             // 
-            this.tblMainLayout.SetColumnSpan(this.label1, 5);
-            this.label1.Location = new System.Drawing.Point(11, 40);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(528, 32);
-            this.label1.TabIndex = 9;
-            this.label1.Text = "공지사항";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+            this.tblMainLayout.SetColumnSpan(this.notificationBox, 5);
+            this.notificationBox.Location = new System.Drawing.Point(11, 40);
+            this.notificationBox.Name = "notificationBox";
+            this.notificationBox.Size = new System.Drawing.Size(528, 32);
+            this.notificationBox.TabIndex = 9;
+            this.notificationBox.Text = "공지사항";
+            this.notificationBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.notificationBox.Click += new System.EventHandler(this.notificationBox_Click);
             // 
             // ChatForm_Client
             // 
@@ -213,7 +211,7 @@
         private System.Windows.Forms.TextBox txtID;
         private System.Windows.Forms.TextBox txtAddress;
         private System.Windows.Forms.TableLayoutPanel tblMainLayout;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label notificationBox;
     }
 }
 

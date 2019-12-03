@@ -24,6 +24,7 @@ namespace MultiChatClient {
 
         delegate void AppendTextDelegate(Control ctrl, string s);
         AppendTextDelegate _textAppender;
+        AppendTextDelegate _notiAppender;
         Socket mainSock;
         Socket udpSock;
         IPAddress thisAddress;
@@ -42,7 +43,7 @@ namespace MultiChatClient {
             _textAppender = new AppendTextDelegate(AppendText);
             udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _textAppender = new AppendTextDelegate(AppendText);
-
+            _notiAppender = new AppendTextDelegate(AppendText);
 
         }
 
@@ -53,6 +54,23 @@ namespace MultiChatClient {
                 ctrl.Text = source + Environment.NewLine + s;
             }
         }
+
+        void AppendNoti(Control ctrl, string s)
+        {
+            if (ctrl.InvokeRequired)
+            {
+                Console.WriteLine("ㅇㅛㄱㅜㄷㅗㅣㄷㅏ");
+                //ctrl.Invoke(_notiAppender, ctrl, s);
+                //ctrl.
+            }
+            else
+            {
+                Console.WriteLine("ㅇㅡㅁ");
+                //string source = ctrl.Text;
+                ctrl.Text = s;
+            }
+        }
+
 
         void OnFormLoaded(object sender, EventArgs e) {
 
@@ -260,7 +278,9 @@ namespace MultiChatClient {
             // 따라서 대리자를 통해 처리한다.
             if (data.id.Equals("Server"))
             {
+                
                 AppendText(txtHistory, string.Format("[공지사항이 등록되었습니다.] : {0}", data.text));
+                AppendNoti(notificationBox, string.Format("{0}", data.text));
             }
             else
             {
@@ -337,17 +357,7 @@ namespace MultiChatClient {
             }
         }
 
-        private void txtHistory_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tblMainLayout_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
+        private void notificationBox_Click(object sender, EventArgs e)
         {
 
         }
