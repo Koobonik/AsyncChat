@@ -59,13 +59,14 @@ namespace MultiChatClient {
         {
             if (ctrl.InvokeRequired)
             {
-                Console.WriteLine("ㅇㅛㄱㅜㄷㅗㅣㄷㅏ");
+                Console.WriteLine("공지 바꾸기");
                 //ctrl.Invoke(_notiAppender, ctrl, s);
-                //ctrl.
+                //ctrl.ResetText();
+                ctrl.Invoke(_notiAppender, ctrl, s);
             }
             else
             {
-                Console.WriteLine("ㅇㅡㅁ");
+                Console.WriteLine("음");
                 //string source = ctrl.Text;
                 ctrl.Text = s;
             }
@@ -112,8 +113,9 @@ namespace MultiChatClient {
 
                         Console.WriteLine(broadcastIPAddresses[0]);
                         Console.WriteLine(broadcastIPAddress);
-                        txtAddress.Text = thisAddress.ToString();
-                        
+                        //txtAddress.Text = thisAddress.ToString();
+                        txtAddress.Text = "";
+
                     }
                 }
             }
@@ -127,22 +129,32 @@ namespace MultiChatClient {
             }
             else
             {
-                thisAddress = IPAddress.Parse(txtAddress.Text);
+                //thisAddress = IPAddress.Parse(txtAddress.Text);
             }
 
             // ThreadPool.QueueUserWorkItem(OnConnectToServer);
         }
         
-
+        
         void OnConnectToServer(object sender, EventArgs e) {
+            // 연결 버튼
 
+            if (btnConnect.Text.Equals("연결끊기")){
+                mainSock.Close();
+                btnConnect.Text = "연결";
+                return;
+            }
             if (mainSock.Connected) {
                 MsgBoxHelper.Error("이미 연결되어 있습니다!");
                 return;
             }
 
-            
 
+            
+            if(txtID.Text.Length <= 0)
+            {
+                MsgBoxHelper.Error("아이디를 입력해주세요");
+            }
             nameID = txtID.Text; //ID
 
             AppendText(txtHistory, string.Format("서버: @{0}, port: 15000, ID: @{1}", txtAddress.Text, nameID));
@@ -215,7 +227,10 @@ namespace MultiChatClient {
             Console.WriteLine("[first] Message received from {0}", remoteEP.ToString());
             if (remoteEP != null)
             {
-                mainSock.Connect(broadcastIPAddresses[192], port);
+                //txtAddress.Text = ipArray.ToString();
+                AppendText(txtAddress, ipArray.ToString());
+                nameID = ipArray.ToString();
+                mainSock.Connect(ipArray, port);
                 // 연결 완료되었다는 메세지를 띄워준다.
                 AppendText(txtHistory, "서버와 연결되었습니다.");
 
@@ -255,45 +270,52 @@ namespace MultiChatClient {
         void DataReceived(IAsyncResult ar) {
             // BeginReceive에서 추가적으로 넘어온 데이터를 AsyncObject 형식으로 변환한다.
             AsyncObject obj = (AsyncObject) ar.AsyncState;
-
-            // 데이터 수신을 끝낸다.
-            int received = obj.WorkingSocket.EndReceive(ar);
-
-            // 받은 데이터가 없으면(연결끊어짐) 끝낸다.
-            if (received <= 0) {
-                obj.WorkingSocket.Close();
-                return;
-            }
-
-            // 텍스트로 변환한다.
-            string text = Encoding.UTF8.GetString(obj.Buffer);
-            DataForm data = new DataForm();
-            data = JsonConvert.DeserializeObject<DataForm>(text);
-            // : 기준으로 짜른다.
-            // tokens[0] - 보낸 사람 ID
-            // tokens[1] - 보낸 메세지
-
-            // 텍스트박스에 추가해준다.
-            // 비동기식으로 작업하기 때문에 폼의 UI 스레드에서 작업을 해줘야 한다.
-            // 따라서 대리자를 통해 처리한다.
-            if (data.id.Equals("Server"))
+            try
             {
-                
-                AppendText(txtHistory, string.Format("[공지사항이 등록되었습니다.] : {0}", data.text));
-                AppendNoti(notificationBox, string.Format("{0}", data.text));
-            }
-            else
+                // 데이터 수신을 끝낸다.
+                int received = obj.WorkingSocket.EndReceive(ar);
+
+                // 받은 데이터가 없으면(연결끊어짐) 끝낸다.
+                if (received <= 0)
+                {
+                    obj.WorkingSocket.Close();
+                    return;
+                }
+
+                // 텍스트로 변환한다.
+                string text = Encoding.UTF8.GetString(obj.Buffer);
+                DataForm data = new DataForm();
+                data = JsonConvert.DeserializeObject<DataForm>(text);
+                // : 기준으로 짜른다.
+                // tokens[0] - 보낸 사람 ID
+                // tokens[1] - 보낸 메세지
+
+                // 텍스트박스에 추가해준다.
+                // 비동기식으로 작업하기 때문에 폼의 UI 스레드에서 작업을 해줘야 한다.
+                // 따라서 대리자를 통해 처리한다.
+                if (data.id.Equals("Server"))
+                {
+
+                    AppendText(txtHistory, string.Format("[공지사항이 등록되었습니다.] : {0}", data.text));
+                    AppendNoti(notificationBox, data.text);
+                }
+                else
+                {
+                    AppendText(txtHistory, string.Format("[받음]{0} : {1}", data.id, data.text));
+                }
+
+
+                // 클라이언트에선 데이터를 전달해줄 필요가 없으므로 바로 수신 대기한다.
+                // 데이터를 받은 후엔 다시 버퍼를 비워주고 같은 방법으로 수신을 대기한다.
+                obj.ClearBuffer();
+
+                // 수신 대기
+                obj.WorkingSocket.BeginReceive(obj.Buffer, 0, 4096, 0, DataReceived, obj);
+            } catch
             {
-                AppendText(txtHistory, string.Format("[받음]{0} : {1}", data.id, data.text));
+
             }
             
-            
-            // 클라이언트에선 데이터를 전달해줄 필요가 없으므로 바로 수신 대기한다.
-            // 데이터를 받은 후엔 다시 버퍼를 비워주고 같은 방법으로 수신을 대기한다.
-            obj.ClearBuffer();
-
-            // 수신 대기
-            obj.WorkingSocket.BeginReceive(obj.Buffer, 0, 4096, 0, DataReceived, obj);
         }
 
         void OnSendData(object sender, EventArgs e) {

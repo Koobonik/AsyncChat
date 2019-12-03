@@ -50,7 +50,7 @@ namespace MultiChatServer {
             string welcome = "Welcome to udp server";
             data = Encoding.UTF8.GetBytes(welcome);
             server.SendTo(data, remoteEP);
-            AppendText(txtHistory, string.Format("뭔가 되고있어"));
+            //AppendText(txtHistory, string.Format("뭔가 되고있어"));
             //while (true)
             //{
             //    data = new byte[1024];
@@ -203,55 +203,62 @@ namespace MultiChatServer {
             // BeginReceive에서 추가적으로 넘어온 데이터를 AsyncObject 형식으로 변환한다.
             AsyncObject obj = (AsyncObject)ar.AsyncState;
 
-            // 데이터 수신을 끝낸다.
-            int received = obj.WorkingSocket.EndReceive(ar);
+            try
+            {
+                // 데이터 수신을 끝낸다.
+                int received = obj.WorkingSocket.EndReceive(ar);
 
-            // 받은 데이터가 없으면(연결끊어짐) 끝낸다.
-            if (received <= 0) {
-                obj.WorkingSocket.Disconnect(false);
-                obj.WorkingSocket.Close();
-                return;
-            }
-            Console.WriteLine(obj.Buffer);
-            // 텍스트로 변환한다.
-            string text = Encoding.UTF8.GetString(obj.Buffer);
-            Console.WriteLine(text);
-            // : 기준으로 짜른다.
-            // tokens[0] - 보낸 사람 ID
-            // tokens[1] - 보낸 메세지
-            //string[] tokens = text.Split('`');
-            //string id = tokens[0];
-            //string msg = tokens[1];
+                // 받은 데이터가 없으면(연결끊어짐) 끝낸다.
+                if (received <= 0)
+                {
+                    obj.WorkingSocket.Disconnect(false);
+                    obj.WorkingSocket.Close();
+                    return;
+                }
+                Console.WriteLine(obj.Buffer);
+                // 텍스트로 변환한다.
+                string text = Encoding.UTF8.GetString(obj.Buffer);
+                Console.WriteLine(text);
 
-            DataForm data = new DataForm();
-            data  = JsonConvert.DeserializeObject<DataForm>(text);
+                DataForm data = new DataForm();
+                data = JsonConvert.DeserializeObject<DataForm>(text);
 
-            // 텍스트박스에 추가해준다.
-            // 비동기식으로 작업하기 때문에 폼의 UI 스레드에서 작업을 해줘야 한다.
-            // 따라서 대리자를 통해 처리한다.
-            AppendText(txtHistory, string.Format("[받음]{0}: {1}", data.id, data.text));
-            
-            // for을 통해 "역순"으로 클라이언트에게 데이터를 보낸다.
-            for (int i = connectedClients.Count - 1; i >= 0; i--) {
-                Socket socket = connectedClients[i];
-                if (socket != obj.WorkingSocket) {
-                    try {
-                        string request = JsonConvert.SerializeObject(data);
-                        socket.Send(obj.Buffer);
-                    }
-                    catch {
-                        // 오류 발생하면 전송 취소하고 리스트에서 삭제한다.
-                        try { socket.Dispose(); } catch { }
-                        connectedClients.RemoveAt(i);
+                // 텍스트박스에 추가해준다.
+                // 비동기식으로 작업하기 때문에 폼의 UI 스레드에서 작업을 해줘야 한다.
+                // 따라서 대리자를 통해 처리한다.
+                AppendText(txtHistory, string.Format("[받음]{0}: {1}", data.id, data.text));
+
+                // for을 통해 "역순"으로 클라이언트에게 데이터를 보낸다.
+                for (int i = connectedClients.Count - 1; i >= 0; i--)
+                {
+                    Socket socket = connectedClients[i];
+                    if (socket != obj.WorkingSocket)
+                    {
+                        try
+                        {
+                            string request = JsonConvert.SerializeObject(data);
+                            socket.Send(obj.Buffer);
+                        }
+                        catch
+                        {
+                            // 오류 발생하면 전송 취소하고 리스트에서 삭제한다.
+                            try { socket.Dispose(); } catch { }
+                            connectedClients.RemoveAt(i);
+                        }
                     }
                 }
+
+                // 데이터를 받은 후엔 다시 버퍼를 비워주고 같은 방법으로 수신을 대기한다.
+                obj.ClearBuffer();
+
+                // 수신 대기
+                obj.WorkingSocket.BeginReceive(obj.Buffer, 0, 4096, 0, DataReceived, obj);
             }
+            catch
+            {
 
-            // 데이터를 받은 후엔 다시 버퍼를 비워주고 같은 방법으로 수신을 대기한다.
-            obj.ClearBuffer();
-
-            // 수신 대기
-            obj.WorkingSocket.BeginReceive(obj.Buffer, 0, 4096, 0, DataReceived, obj);
+            }
+            
         }
 
         void OnSendData(object sender, EventArgs e) {
