@@ -146,7 +146,7 @@ namespace MultiChatClient {
                 DataForm dataForm = new DataForm();
                 dataForm.id = nameID;
                 dataForm.req = "close";
-                dataForm.text = "연결을 종료했습니다.";
+                dataForm.text = "연결을 종료합니다.";
                 string request = JsonConvert.SerializeObject(dataForm);
                 byte[] bDts = Encoding.UTF8.GetBytes(request);
                 // Encoding.UTF8.GetBytes(nameID + '`' + tts);
