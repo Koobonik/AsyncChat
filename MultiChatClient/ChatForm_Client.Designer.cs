@@ -61,7 +61,7 @@
             this.tblMainLayout.Padding = new System.Windows.Forms.Padding(8);
             this.tblMainLayout.RowCount = 4;
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.tblMainLayout.Size = new System.Drawing.Size(550, 402);
@@ -131,12 +131,12 @@
             this.txtHistory.BackColor = System.Drawing.Color.White;
             this.tblMainLayout.SetColumnSpan(this.txtHistory, 5);
             this.txtHistory.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtHistory.Location = new System.Drawing.Point(12, 75);
+            this.txtHistory.Location = new System.Drawing.Point(12, 93);
             this.txtHistory.Margin = new System.Windows.Forms.Padding(4, 3, 2, 3);
             this.txtHistory.Multiline = true;
             this.txtHistory.Name = "txtHistory";
             this.txtHistory.ReadOnly = true;
-            this.txtHistory.Size = new System.Drawing.Size(528, 284);
+            this.txtHistory.Size = new System.Drawing.Size(528, 266);
             this.txtHistory.TabIndex = 5;
             // 
             // btnSend

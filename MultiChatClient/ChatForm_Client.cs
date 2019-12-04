@@ -243,21 +243,6 @@ namespace MultiChatClient {
             stringData = Encoding.UTF8.GetString(data, 0, recv);
             Console.WriteLine(stringData);
 
-            //while (true)
-            //{
-            //    Console.Write("send data : ");
-            //    input = Console.ReadLine();
-            //    if (input == "exit")
-            //        break;
-
-            //    data = Encoding.UTF8.GetBytes(input);
-            //    client.SendTo(data, data.Length, SocketFlags.None, serverEP);
-
-            //    recv = client.ReceiveFrom(data, ref remoteEP);
-            //    stringData = Encoding.UTF8.GetString(data);
-            //    Console.WriteLine("received data : {0}", stringData);
-            //}
-
             Console.WriteLine("Stopping client");
             client.Close();
 
@@ -296,7 +281,8 @@ namespace MultiChatClient {
                 {
 
                     AppendText(txtHistory, string.Format("[공지사항이 등록되었습니다.] : {0}", data.text));
-                    AppendNoti(notificationBox, data.text);
+                    notificationBox.Text = data.text;
+                    // AppendNoti(notificationBox, data.text);
                 }
                 else
                 {

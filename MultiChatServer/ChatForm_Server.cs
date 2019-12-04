@@ -25,6 +25,7 @@ namespace MultiChatServer {
         Socket udpSock;
         IPAddress thisAddress;
         List<Socket> connectedClients;
+        String notice = "";
         
         void asyncConnectClient()
         {
@@ -294,6 +295,7 @@ namespace MultiChatServer {
             DataForm dataForm = new DataForm();
             dataForm.id = "Server";
             dataForm.text = tts;
+            dataForm.req = "notice";
             string request = JsonConvert.SerializeObject(dataForm);
             byte[] bDts = Encoding.UTF8.GetBytes(request);
 
