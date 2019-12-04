@@ -48,9 +48,14 @@ namespace MultiChatServer {
             Console.WriteLine("[first] Message received from {0}", remoteEP.ToString());
             Console.WriteLine("[first] received data : {0}", Encoding.UTF8.GetString(data, 0, recv));
 
-            string welcome = "Welcome to udp server";
-            data = Encoding.UTF8.GetBytes(welcome);
-            server.SendTo(data, remoteEP);
+            DataForm dataForm = new DataForm();
+            dataForm.id = "Server";
+            dataForm.text = notice;
+            dataForm.req = "notice";
+            string request = JsonConvert.SerializeObject(dataForm);
+            byte[] bDts = Encoding.UTF8.GetBytes(request);
+            
+            server.SendTo(bDts, remoteEP);
             //AppendText(txtHistory, string.Format("뭔가 되고있어"));
             //while (true)
             //{
@@ -295,6 +300,7 @@ namespace MultiChatServer {
             DataForm dataForm = new DataForm();
             dataForm.id = "Server";
             dataForm.text = tts;
+            notice = tts;
             dataForm.req = "notice";
             string request = JsonConvert.SerializeObject(dataForm);
             byte[] bDts = Encoding.UTF8.GetBytes(request);

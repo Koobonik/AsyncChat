@@ -238,9 +238,36 @@ namespace MultiChatClient {
                 obj.WorkingSocket = mainSock;
                 //obj.WorkingSocket = udpSock;
                 mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
+                stringData = Encoding.UTF8.GetString(data, 0, recv);
+                Console.WriteLine(stringData);
+
+
+                // 텍스트로 변환한다.
+                
+                DataForm data3 = new DataForm();
+                data3 = JsonConvert.DeserializeObject<DataForm>(stringData);
+                Console.WriteLine(data3.id + " " + data3.text);
+                if(data3.text.Length > 0)
+                {
+                    try
+                    {
+                        //notificationBox.Text = data3.text;
+                        //Console.WriteLine("처리?");
+                    }
+                    catch
+                    {
+                        //Console.WriteLine("처리안되나");
+                        //AppendNoti(notificationBox, data3.text);
+                        //notificationBox.Invoke(_notiAppender, notificationBox, data3.text);
+                    }
+                    
+                }
                 return;
             }
             stringData = Encoding.UTF8.GetString(data, 0, recv);
+
+
+
             Console.WriteLine(stringData);
 
             Console.WriteLine("Stopping client");
