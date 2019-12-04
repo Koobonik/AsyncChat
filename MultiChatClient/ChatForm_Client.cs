@@ -338,6 +338,7 @@ namespace MultiChatClient {
             DataForm dataForm = new DataForm();
             dataForm.id = nameID;
             dataForm.text = tts;
+            dataForm.req = "msg";
             string request = JsonConvert.SerializeObject(dataForm);
             byte[] bDts = Encoding.UTF8.GetBytes(request);
             // Encoding.UTF8.GetBytes(nameID + '`' + tts);

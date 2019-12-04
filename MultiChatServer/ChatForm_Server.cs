@@ -215,6 +215,7 @@ namespace MultiChatServer {
                     obj.WorkingSocket.Close();
                     return;
                 }
+
                 Console.WriteLine(obj.Buffer);
                 // 텍스트로 변환한다.
                 string text = Encoding.UTF8.GetString(obj.Buffer);
@@ -222,6 +223,18 @@ namespace MultiChatServer {
 
                 DataForm data = new DataForm();
                 data = JsonConvert.DeserializeObject<DataForm>(text);
+                if(data.req == null)
+                {
+                    MsgBoxHelper.Error("null");
+                    data.req = "";
+                }
+                if (data.req.Equals("close"))
+                {
+                    MsgBoxHelper.Error("close 들어옴");
+                    Console.WriteLine("close 들어옴");
+                    obj.WorkingSocket.Disconnect(false);
+                    obj.WorkingSocket.Close();
+                }
 
                 // 텍스트박스에 추가해준다.
                 // 비동기식으로 작업하기 때문에 폼의 UI 스레드에서 작업을 해줘야 한다.
