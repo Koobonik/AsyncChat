@@ -255,14 +255,9 @@ namespace MultiChatClient {
                         {
                             notificationBox.Text = data3.text;
                         }));
-                        //notificationBox.Text = data3.text;
-                        //Console.WriteLine("처리?");
                     }
                     catch
                     {
-                        //Console.WriteLine("처리안되나");
-                        //AppendNoti(notificationBox, data3.text);
-                        //notificationBox.Invoke(_notiAppender, notificationBox, data3.text);
                     }
                     
                 }
