@@ -33,7 +33,7 @@ namespace MultiChatClient {
         Socket[] socket = new Socket[254];
         IPAddress[] broadcastIPAddresses = new IPAddress[254];
         string nameID;
-        int port = 15000;  //고정
+        int port = 15952;  //고정
 
         public ChatForm_Client() {
 
@@ -175,7 +175,7 @@ namespace MultiChatClient {
             }
             nameID = txtID.Text; //ID
 
-            AppendText(txtHistory, string.Format("서버: @{0}, port: 15000, ID: @{1}", txtAddress.Text, nameID));
+            AppendText(txtHistory, string.Format("서버: @{0}, port: @{1}, ID: @{2}", txtAddress.Text, port, nameID));
             try
             {
                 // 여기서 브로드 캐스트 한번 해줘야 함

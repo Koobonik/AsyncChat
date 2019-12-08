@@ -28,7 +28,7 @@ namespace MultiChatServer
         IPAddress thisAddress;
         List<Socket> connectedClients;
         String notice = "";
-
+        int serverPort = 15952;
         void asyncConnectClient()
         {
 
@@ -79,10 +79,6 @@ namespace MultiChatServer
 
         public ChatForm_Server()
         {
-
-
-
-
             InitializeComponent();
             mainSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
             udpSock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -92,8 +88,6 @@ namespace MultiChatServer
             Thread th = new Thread(asyncConnectClient);
             th.IsBackground = true;
             th.Start();
-
-
         }
 
         void AppendText(Control ctrl, string s)
@@ -129,19 +123,6 @@ namespace MultiChatServer
                     }
                 }
             }
-
-            // 주소가 없다면..
-
-            //if (thisAddress == null)
-            //{
-            //    // 로컬호스트 주소를 사용한다.
-            //    thisAddress = IPAddress.Loopback;
-            //    txtAddress.Text = thisAddress.ToString();
-            //}
-            //else
-            //{
-            //    thisAddress = IPAddress.Parse(txtAddress.Text);
-            //}
         }
         void BeginStartServer(object sender, EventArgs e)
         {
@@ -178,7 +159,7 @@ namespace MultiChatServer
             // 서버에서 클라이언트의 연결 요청을 대기하기 위해
             // 소켓을 열어둔다.
 
-            IPEndPoint serverEP = new IPEndPoint(thisAddress, port);
+            IPEndPoint serverEP = new IPEndPoint(thisAddress, serverPort);
 
             udpSock.Bind(serverEP);
             //udpSock.Listen(10);
