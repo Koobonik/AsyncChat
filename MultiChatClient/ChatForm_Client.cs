@@ -221,7 +221,7 @@ namespace MultiChatClient {
             data = new byte[1024];
             recv = client.ReceiveFrom(data, ref remoteEP);
             
-
+            
             Console.WriteLine("[first] Message received from {0}", remoteEP.ToString());
             if (remoteEP != null)
             {
@@ -251,6 +251,10 @@ namespace MultiChatClient {
                 {
                     try
                     {
+                        this.Invoke(new Action(delegate ()
+                        {
+                            notificationBox.Text = data3.text;
+                        }));
                         //notificationBox.Text = data3.text;
                         //Console.WriteLine("처리?");
                     }
@@ -308,7 +312,10 @@ namespace MultiChatClient {
                 {
 
                     AppendText(txtHistory, string.Format("[공지사항이 등록되었습니다.] : {0}", data.text));
-                    notificationBox.Text = data.text;
+                    this.Invoke(new Action(delegate ()
+                    {
+                        notificationBox.Text = data.text;
+                    }));
                     // AppendNoti(notificationBox, data.text);
                 }
                 else

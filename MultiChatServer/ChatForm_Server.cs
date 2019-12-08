@@ -7,11 +7,13 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Threading;
 
-namespace MultiChatServer {
-    public partial class ChatForm_Server : Form {
+namespace MultiChatServer
+{
+    public partial class ChatForm_Server : Form
+    {
 
 
-        
+
         class DataForm
         {
             public string req;
@@ -26,10 +28,10 @@ namespace MultiChatServer {
         IPAddress thisAddress;
         List<Socket> connectedClients;
         String notice = "";
-        
+
         void asyncConnectClient()
         {
-            
+
 
             int recv = 0;
             byte[] data = new byte[1024];
@@ -39,7 +41,7 @@ namespace MultiChatServer {
             server.Bind(ep);
 
             Console.WriteLine("클라이언트 기다리는 중");
-            
+
             IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
             EndPoint remoteEP = (EndPoint)sender;
 
@@ -54,7 +56,7 @@ namespace MultiChatServer {
             dataForm.req = "notice";
             string request = JsonConvert.SerializeObject(dataForm);
             byte[] bDts = Encoding.UTF8.GetBytes(request);
-            
+
             server.SendTo(bDts, remoteEP);
             //AppendText(txtHistory, string.Format("뭔가 되고있어"));
             //while (true)
@@ -75,9 +77,10 @@ namespace MultiChatServer {
             th.Start();
         }
 
-        public ChatForm_Server() {
+        public ChatForm_Server()
+        {
 
-            
+
 
 
             InitializeComponent();
@@ -93,15 +96,18 @@ namespace MultiChatServer {
 
         }
 
-        void AppendText(Control ctrl, string s) {
+        void AppendText(Control ctrl, string s)
+        {
             if (ctrl.InvokeRequired) ctrl.Invoke(_textAppender, ctrl, s);
-            else {
+            else
+            {
                 string source = ctrl.Text;
                 ctrl.Text = source + Environment.NewLine + s;
             }
         }
 
-        void OnFormLoaded(object sender, EventArgs e) {
+        void OnFormLoaded(object sender, EventArgs e)
+        {
             IPHostEntry he = Dns.GetHostEntry(Dns.GetHostName());
             // 처음으로 발견되는 ipv4 주소를 사용한다.
             foreach (IPAddress addr in he.AddressList)
@@ -113,7 +119,7 @@ namespace MultiChatServer {
                     // ! A, B, C 클래스 제외
                     if (ip[0].Equals("172") || ip[0].Equals("192") || ip[0].Equals("10") || ip[0].Equals("169") || ip[0].Equals("127")
                         || ip[0].Equals("0") || ip[0].Equals("224") || ip[0].Equals("240") || ip[0].Equals("239") || (ip[0].Equals("192")
-                        && ip[1] .Equals("168")) || (ip[0].Equals("172") && Convert.ToInt32(ip[1]) >=16 && Convert.ToInt32(ip[1]) <= 31) )
+                        && ip[1].Equals("168")) || (ip[0].Equals("172") && Convert.ToInt32(ip[1]) >= 16 && Convert.ToInt32(ip[1]) <= 31))
                     {
                         //AppendText(txtHistory, "포함");
                     }
@@ -137,9 +143,11 @@ namespace MultiChatServer {
             //    thisAddress = IPAddress.Parse(txtAddress.Text);
             //}
         }
-        void BeginStartServer(object sender, EventArgs e) {
+        void BeginStartServer(object sender, EventArgs e)
+        {
             int port;
-            if (!int.TryParse(txtPort.Text, out port)) {
+            if (!int.TryParse(txtPort.Text, out port))
+            {
                 MsgBoxHelper.Error("포트 번호가 잘못 입력되었거나 입력되지 않았습니다.");
                 txtPort.Focus();
                 txtPort.SelectAll();
@@ -185,7 +193,8 @@ namespace MultiChatServer {
         }
 
 
-        void AcceptCallback(IAsyncResult ar) {
+        void AcceptCallback(IAsyncResult ar)
+        {
             // 클라이언트의 연결 요청을 수락한다.
             Socket client = mainSock.EndAccept(ar);
 
@@ -205,7 +214,8 @@ namespace MultiChatServer {
             client.BeginReceive(obj.Buffer, 0, 4096, 0, DataReceived, obj);
         }
 
-        void DataReceived(IAsyncResult ar) {
+        void DataReceived(IAsyncResult ar)
+        {
             // BeginReceive에서 추가적으로 넘어온 데이터를 AsyncObject 형식으로 변환한다.
             AsyncObject obj = (AsyncObject)ar.AsyncState;
 
@@ -229,7 +239,7 @@ namespace MultiChatServer {
 
                 DataForm data = new DataForm();
                 data = JsonConvert.DeserializeObject<DataForm>(text);
-                if(data.req == null)
+                if (data.req == null)
                 {
                     MsgBoxHelper.Error("null");
                     data.req = "";
@@ -279,19 +289,22 @@ namespace MultiChatServer {
             {
 
             }
-            
+
         }
 
-        void OnSendData(object sender, EventArgs e) {
+        void OnSendData(object sender, EventArgs e)
+        {
             // 서버가 대기중인지 확인한다.
-            if (!mainSock.IsBound) {
+            if (!mainSock.IsBound)
+            {
                 MsgBoxHelper.Warn("서버가 실행되고 있지 않습니다!");
                 return;
             }
-            
+
             // 보낼 텍스트
             string tts = txtTTS.Text.Trim();
-            if (string.IsNullOrEmpty(tts)) {
+            if (string.IsNullOrEmpty(tts))
+            {
                 MsgBoxHelper.Warn("공지사항이 입력되지 않았습니다!");
                 txtTTS.Focus();
                 return;
@@ -309,9 +322,12 @@ namespace MultiChatServer {
             // byte[] bDts = Encoding.UTF8.GetBytes("Server" + '`' + tts);
 
             // 연결된 모든 클라이언트에게 전송한다.
-            for (int i = connectedClients.Count - 1; i >= 0; i--) {
+            for (int i = connectedClients.Count - 1; i >= 0; i--)
+            {
                 Socket socket = connectedClients[i];
-                try { socket.Send(bDts); } catch {
+                try { socket.Send(bDts); }
+                catch
+                {
                     // 오류 발생하면 전송 취소하고 리스트에서 삭제한다.
                     try { socket.Dispose(); } catch { }
                     connectedClients.RemoveAt(i);
@@ -325,8 +341,10 @@ namespace MultiChatServer {
 
         private void ChatForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            try {
-                mainSock.Close(); }
+            try
+            {
+                mainSock.Close();
+            }
             catch { }
 
         }
@@ -341,22 +359,66 @@ namespace MultiChatServer {
             Console.WriteLine("눌림");
             if (Convert.ToInt32(f.KeyChar) == 13)
             {
-                MessageBox.Show(" Enter pressed ");
+                //sendData();
+                //MessageBox.Show(" Enter pressed ");
             }
         }
 
         private void txtTTS_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void txtTTS_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (Convert.ToInt32(e.KeyChar) == 13)
             {
+                sendData();
                 MessageBox.Show(" Enter pressed ");
             }
         }
-        
+        void sendData()
+        {
+            // 서버가 대기중인지 확인한다.
+            if (!mainSock.IsBound)
+            {
+                MsgBoxHelper.Warn("서버가 실행되고 있지 않습니다!");
+                return;
+            }
+
+            // 보낼 텍스트
+            string tts = txtTTS.Text.Trim();
+            if (string.IsNullOrEmpty(tts))
+            {
+                MsgBoxHelper.Warn("공지사항이 입력되지 않았습니다!");
+                txtTTS.Focus();
+                return;
+            }
+
+            DataForm dataForm = new DataForm();
+            dataForm.id = "Server";
+            dataForm.text = tts;
+            notice = tts;
+            dataForm.req = "notice";
+            string request = JsonConvert.SerializeObject(dataForm);
+            byte[] bDts = Encoding.UTF8.GetBytes(request);
+
+            // 문자열을 utf8 형식의 바이트로 변환한다.
+            // byte[] bDts = Encoding.UTF8.GetBytes("Server" + '`' + tts);
+
+            // 연결된 모든 클라이언트에게 전송한다.
+            for (int i = connectedClients.Count - 1; i >= 0; i--)
+            {
+                Socket socket = connectedClients[i];
+                try { socket.Send(bDts); }
+                catch
+                {
+                    // 오류 발생하면 전송 취소하고 리스트에서 삭제한다.
+                    try { socket.Dispose(); } catch { }
+                    connectedClients.RemoveAt(i);
+                }
+            }
+
+        }
     }
 }
