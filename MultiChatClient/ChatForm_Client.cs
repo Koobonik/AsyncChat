@@ -30,8 +30,8 @@ namespace MultiChatClient {
         IPAddress thisAddress;
         IPAddress serverIPAddress;
         string broadcastIPAddress;
-        Socket[] socket = new Socket[253];
-        IPAddress[] broadcastIPAddresses = new IPAddress[253];
+        Socket[] socket = new Socket[254];
+        IPAddress[] broadcastIPAddresses = new IPAddress[254];
         string nameID;
         int port = 15000;  //고정
 
@@ -102,7 +102,7 @@ namespace MultiChatClient {
                             broadcastIPAddress += hi[i] + ".";
                             Console.WriteLine(broadcastIPAddress);
                         }
-                        for(int i = 0; i<253; i++)
+                        for(int i = 0; i<254; i++)
                         {
 
                             broadcastIPAddresses[i] = IPAddress.Parse( broadcastIPAddress + (i + 1));
