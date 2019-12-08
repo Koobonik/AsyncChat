@@ -374,7 +374,7 @@ namespace MultiChatServer
             if (Convert.ToInt32(e.KeyChar) == 13)
             {
                 sendData();
-                MessageBox.Show(" Enter pressed ");
+                // MessageBox.Show(" Enter pressed ");
             }
         }
         void sendData()
