@@ -58,7 +58,14 @@ namespace MultiChatServer
             dataForm.text = notice;
             dataForm.req = "notice";
             string request = JsonConvert.SerializeObject(dataForm);
-            byte[] bDts = Encoding.UTF8.GetBytes(request);
+            string encryptedData = AESEncrypt256(request, key);
+
+            byte[] bDts = Encoding.UTF8.GetBytes(encryptedData);
+
+            string text = Encoding.UTF8.GetString(bDts);
+
+            
+            Console.WriteLine(text);
 
             server.SendTo(bDts, remoteEP);
             //AppendText(txtHistory, string.Format("뭔가 되고있어"));
@@ -278,49 +285,50 @@ namespace MultiChatServer
 
         void OnSendData(object sender, EventArgs e)
         {
-            // 서버가 대기중인지 확인한다.
-            if (!mainSock.IsBound)
-            {
-                MsgBoxHelper.Warn("서버가 실행되고 있지 않습니다!");
-                return;
-            }
+            sendData();
+            //// 서버가 대기중인지 확인한다.
+            //if (!mainSock.IsBound)
+            //{
+            //    MsgBoxHelper.Warn("서버가 실행되고 있지 않습니다!");
+            //    return;
+            //}
 
-            // 보낼 텍스트
-            string tts = txtTTS.Text.Trim();
-            if (string.IsNullOrEmpty(tts))
-            {
-                MsgBoxHelper.Warn("공지사항이 입력되지 않았습니다!");
-                txtTTS.Focus();
-                return;
-            }
+            //// 보낼 텍스트
+            //string tts = txtTTS.Text.Trim();
+            //if (string.IsNullOrEmpty(tts))
+            //{
+            //    MsgBoxHelper.Warn("공지사항이 입력되지 않았습니다!");
+            //    txtTTS.Focus();
+            //    return;
+            //}
 
-            DataForm dataForm = new DataForm();
-            dataForm.id = "Server";
-            dataForm.text = tts;
-            notice = tts;
-            dataForm.req = "notice";
-            string request = JsonConvert.SerializeObject(dataForm);
-            byte[] bDts = Encoding.UTF8.GetBytes(request);
+            //DataForm dataForm = new DataForm();
+            //dataForm.id = "Server";
+            //dataForm.text = tts;
+            //notice = tts;
+            //dataForm.req = "notice";
+            //string request = JsonConvert.SerializeObject(dataForm);
+            //byte[] bDts = Encoding.UTF8.GetBytes(request);
 
-            // 문자열을 utf8 형식의 바이트로 변환한다.
-            // byte[] bDts = Encoding.UTF8.GetBytes("Server" + '`' + tts);
+            //// 문자열을 utf8 형식의 바이트로 변환한다.
+            //// byte[] bDts = Encoding.UTF8.GetBytes("Server" + '`' + tts);
 
-            // 연결된 모든 클라이언트에게 전송한다.
-            for (int i = connectedClients.Count - 1; i >= 0; i--)
-            {
-                Socket socket = connectedClients[i];
-                try { socket.Send(bDts); }
-                catch
-                {
-                    // 오류 발생하면 전송 취소하고 리스트에서 삭제한다.
-                    try { socket.Dispose(); } catch { }
-                    connectedClients.RemoveAt(i);
-                }
-            }
+            //// 연결된 모든 클라이언트에게 전송한다.
+            //for (int i = connectedClients.Count - 1; i >= 0; i--)
+            //{
+            //    Socket socket = connectedClients[i];
+            //    try { socket.Send(bDts); }
+            //    catch
+            //    {
+            //        // 오류 발생하면 전송 취소하고 리스트에서 삭제한다.
+            //        try { socket.Dispose(); } catch { }
+            //        connectedClients.RemoveAt(i);
+            //    }
+            //}
 
-            // 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
-            AppendText(txtHistory, string.Format("[서버 공지]Server : {0}", tts));
-            txtTTS.Clear();
+            //// 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
+            //AppendText(txtHistory, string.Format("[서버 공지]Server : {0}", tts));
+            //txtTTS.Clear();
         }
 
         private void ChatForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -391,7 +399,15 @@ namespace MultiChatServer
             Console.WriteLine(ih);
             string request = JsonConvert.SerializeObject(dataForm);
             string encryptedRequest = AESEncrypt256(request, key);
+            Console.WriteLine(encryptedRequest);
             byte[] bDts = Encoding.UTF8.GetBytes(encryptedRequest);
+
+            string text = Encoding.UTF8.GetString(bDts);
+
+            string dectypedstr = Decrypt256(text, key);
+            Console.WriteLine(dectypedstr);
+
+
 
             // 문자열을 utf8 형식의 바이트로 변환한다.
             // byte[] bDts = Encoding.UTF8.GetBytes("Server" + '`' + tts);
@@ -408,6 +424,8 @@ namespace MultiChatServer
                     connectedClients.RemoveAt(i);
                 }
             }
+            AppendText(txtHistory, string.Format("[서버 공지]Server : {0}", tts));
+            txtTTS.Clear();
 
         }
 

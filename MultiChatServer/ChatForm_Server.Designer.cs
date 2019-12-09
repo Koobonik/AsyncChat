@@ -61,14 +61,14 @@
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tblMainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.tblMainLayout.Size = new System.Drawing.Size(584, 567);
+            this.tblMainLayout.Size = new System.Drawing.Size(584, 441);
             this.tblMainLayout.TabIndex = 1;
             // 
             // txtTTS
             // 
             this.tblMainLayout.SetColumnSpan(this.txtTTS, 3);
             this.txtTTS.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtTTS.Location = new System.Drawing.Point(112, 529);
+            this.txtTTS.Location = new System.Drawing.Point(112, 403);
             this.txtTTS.Margin = new System.Windows.Forms.Padding(4, 2, 3, 3);
             this.txtTTS.MaxLength = 260;
             this.txtTTS.Name = "txtTTS";
@@ -80,7 +80,7 @@
             // 
             this.lblTTS.AutoSize = true;
             this.lblTTS.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblTTS.Location = new System.Drawing.Point(9, 528);
+            this.lblTTS.Location = new System.Drawing.Point(9, 402);
             this.lblTTS.Margin = new System.Windows.Forms.Padding(1);
             this.lblTTS.Name = "lblTTS";
             this.lblTTS.Size = new System.Drawing.Size(98, 30);
@@ -133,13 +133,13 @@
             this.txtHistory.Multiline = true;
             this.txtHistory.Name = "txtHistory";
             this.txtHistory.ReadOnly = true;
-            this.txtHistory.Size = new System.Drawing.Size(562, 481);
+            this.txtHistory.Size = new System.Drawing.Size(562, 355);
             this.txtHistory.TabIndex = 5;
             // 
             // btnSend
             // 
             this.btnSend.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnSend.Location = new System.Drawing.Point(477, 528);
+            this.btnSend.Location = new System.Drawing.Point(477, 402);
             this.btnSend.Margin = new System.Windows.Forms.Padding(1);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(98, 30);
@@ -169,7 +169,7 @@
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(93, 27);
             this.txtPort.TabIndex = 3;
-            this.txtPort.Text = "15952";
+            this.txtPort.Text = "15000";
             this.txtPort.TextChanged += new System.EventHandler(this.txtPort_TextChanged);
             // 
             // ChatForm_Server

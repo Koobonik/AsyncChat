@@ -242,13 +242,16 @@ namespace MultiChatClient {
                 //obj.WorkingSocket = udpSock;
                 mainSock.BeginReceive(obj.Buffer, 0, obj.BufferSize, 0, DataReceived, obj);
                 stringData = Encoding.UTF8.GetString(data, 0, recv);
+                Console.WriteLine("데이터 길이 : "+recv);
                 Console.WriteLine(stringData);
 
+                string decryptedData = Decrypt256(stringData, key);
 
+                Console.WriteLine(decryptedData);
                 // 텍스트로 변환한다.
                 
                 DataForm data3 = new DataForm();
-                data3 = JsonConvert.DeserializeObject<DataForm>(stringData);
+                data3 = JsonConvert.DeserializeObject<DataForm>(decryptedData);
                 Console.WriteLine(data3.id + " " + data3.text);
                 if(data3.text.Length > 0)
                 {
