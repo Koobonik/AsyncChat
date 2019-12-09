@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace MultiChatServer
 {
@@ -27,7 +29,8 @@ namespace MultiChatServer
         Socket udpSock;
         IPAddress thisAddress;
         List<Socket> connectedClients;
-        String notice = "";
+        string notice = "";
+        string key = "01234567891234560123456789123456";
         int serverPort = 15952;
         void asyncConnectClient()
         {
@@ -381,8 +384,14 @@ namespace MultiChatServer
             dataForm.text = tts;
             notice = tts;
             dataForm.req = "notice";
+            string hi = AESEncrypt256("하이하이", "01234567891234560123456789123456");
+            Console.WriteLine(hi);
+
+            string ih = Decrypt256(hi, "01234567891234560123456789123456");
+            Console.WriteLine(ih);
             string request = JsonConvert.SerializeObject(dataForm);
-            byte[] bDts = Encoding.UTF8.GetBytes(request);
+            string encryptedRequest = AESEncrypt256(request, key);
+            byte[] bDts = Encoding.UTF8.GetBytes(encryptedRequest);
 
             // 문자열을 utf8 형식의 바이트로 변환한다.
             // byte[] bDts = Encoding.UTF8.GetBytes("Server" + '`' + tts);
@@ -399,6 +408,113 @@ namespace MultiChatServer
                     connectedClients.RemoveAt(i);
                 }
             }
+
+        }
+
+
+        private string Decrypt256(String Input, String key)
+
+        {
+
+            RijndaelManaged aes = new RijndaelManaged();
+
+            aes.KeySize = 256;
+
+            aes.BlockSize = 128;
+
+            aes.Mode = CipherMode.CBC;
+
+            aes.Padding = PaddingMode.PKCS7;
+
+            aes.Key = Encoding.UTF8.GetBytes(key);
+
+            aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+
+
+            var decrypt = aes.CreateDecryptor();
+
+            byte[] xBuff = null;
+
+            using (var ms = new MemoryStream())
+
+            {
+
+                using (var cs = new CryptoStream(ms, decrypt, CryptoStreamMode.Write))
+
+                {
+
+                    byte[] xXml = Convert.FromBase64String(Input);
+
+                    cs.Write(xXml, 0, xXml.Length);
+
+                }
+
+
+
+                xBuff = ms.ToArray();
+
+            }
+
+
+
+            String Output = Encoding.UTF8.GetString(xBuff);
+
+            return Output;
+
+        }
+
+
+
+        private String AESEncrypt256(String Input, String key)
+
+        {
+
+            RijndaelManaged aes = new RijndaelManaged();
+
+            aes.KeySize = 256;
+
+            aes.BlockSize = 128;
+
+            aes.Mode = CipherMode.CBC;
+
+            aes.Padding = PaddingMode.PKCS7;
+
+            aes.Key = Encoding.UTF8.GetBytes(key);
+
+            aes.IV = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+
+
+            var encrypt = aes.CreateEncryptor(aes.Key, aes.IV);
+
+            byte[] xBuff = null;
+
+            using (var ms = new MemoryStream())
+
+            {
+
+                using (var cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
+
+                {
+
+                    byte[] xXml = Encoding.UTF8.GetBytes(Input);
+
+                    cs.Write(xXml, 0, xXml.Length);
+
+                }
+
+
+
+                xBuff = ms.ToArray();
+
+            }
+
+
+
+            String Output = Convert.ToBase64String(xBuff);
+
+            return Output;
 
         }
     }
