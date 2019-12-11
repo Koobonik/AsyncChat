@@ -220,9 +220,18 @@ namespace MultiChatClient {
             string welcome = "hello, udp server?";
             data = Encoding.UTF8.GetBytes(welcome);
             client.SendTo(data, data.Length, SocketFlags.None, serverEP);
-
+            Console.WriteLine(remoteEP.ToString());
             data = new byte[1024];
-            recv = client.ReceiveFrom(data, ref remoteEP);
+            try
+            {
+                recv = client.ReceiveFrom(data, ref remoteEP);
+            }
+            catch
+            {
+
+            }
+            //recv = client.ReceiveFrom(data, ref remoteEP);
+            Console.WriteLine("왜 이런거야 "+recv);
             
             
             Console.WriteLine("[first] Message received from {0}", remoteEP.ToString());
@@ -232,6 +241,7 @@ namespace MultiChatClient {
                 AppendText(txtAddress, ipArray.ToString());
                 nameID = ipArray.ToString();
                 serverIPAddress = ipArray;
+                Console.WriteLine("서버의 ip 주소 : "+ipArray +"port : " + port);
                 mainSock.Connect(ipArray, port);
                 // 연결 완료되었다는 메세지를 띄워준다.
                 AppendText(txtHistory, "서버와 연결되었습니다.");
@@ -300,8 +310,13 @@ namespace MultiChatClient {
 
                 // 텍스트로 변환한다.
                 string text = Encoding.UTF8.GetString(obj.Buffer);
+                Console.WriteLine(text);
+                string[] ok = text.Split('=');
+                ok[0] += "==";
+                string hi = Decrypt256(ok[0], key);
+                Console.WriteLine(hi);
                 DataForm data = new DataForm();
-                data = JsonConvert.DeserializeObject<DataForm>(text);
+                data = JsonConvert.DeserializeObject<DataForm>(hi);
                 // : 기준으로 짜른다.
                 // tokens[0] - 보낸 사람 ID
                 // tokens[1] - 보낸 메세지
