@@ -220,7 +220,6 @@ namespace MultiChatClient {
             string welcome = "hello, udp server?";
             data = Encoding.UTF8.GetBytes(welcome);
             client.SendTo(data, data.Length, SocketFlags.None, serverEP);
-            Console.WriteLine(remoteEP.ToString());
             data = new byte[1024];
             try
             {
