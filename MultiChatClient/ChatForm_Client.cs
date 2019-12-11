@@ -221,14 +221,7 @@ namespace MultiChatClient {
             data = Encoding.UTF8.GetBytes(welcome);
             client.SendTo(data, data.Length, SocketFlags.None, serverEP);
             data = new byte[1024];
-            try
-            {
-                recv = client.ReceiveFrom(data, ref remoteEP);
-            }
-            catch
-            {
-
-            }
+            recv = client.ReceiveFrom(data, ref remoteEP);
             //recv = client.ReceiveFrom(data, ref remoteEP);
             Console.WriteLine("왜 이런거야 "+recv);
             
