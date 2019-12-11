@@ -27,10 +27,10 @@ namespace MultiChatClient {
         delegate void AppendTextDelegate(Control ctrl, string s);
         AppendTextDelegate _textAppender;
         AppendTextDelegate _notiAppender;
-        Socket mainSock;
-        Socket udpSock;
-        IPAddress thisAddress;
-        IPAddress serverIPAddress;
+        Socket mainSock; // 메시지 주고 받는 소켓
+        Socket udpSock; // 브로드 캐스팅 할 때 쓰이는 소켓
+        IPAddress thisAddress; // 현재 컴퓨터 주소
+        IPAddress serverIPAddress; // 서버 주소
         string broadcastIPAddress;
         Socket[] socket = new Socket[254];
         IPAddress[] broadcastIPAddresses = new IPAddress[254];

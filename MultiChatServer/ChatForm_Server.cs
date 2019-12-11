@@ -25,9 +25,9 @@ namespace MultiChatServer
         }
         delegate void AppendTextDelegate(Control ctrl, string s);
         AppendTextDelegate _textAppender;
-        Socket mainSock;
-        Socket udpSock;
-        IPAddress thisAddress;
+        Socket mainSock; // 메시지 주고 받는 소켓
+        Socket udpSock; // udp 응답을 받아줄 소켓
+        IPAddress thisAddress; // ip 서버 주소
         List<Socket> connectedClients;
         string notice = "";
         string key = "01234567891234560123456789123456";
@@ -68,18 +68,6 @@ namespace MultiChatServer
             Console.WriteLine(text);
 
             server.SendTo(bDts, remoteEP);
-            //AppendText(txtHistory, string.Format("뭔가 되고있어"));
-            //while (true)
-            //{
-            //    data = new byte[1024];
-            //    recv = server.ReceiveFrom(data, ref remoteEP);
-            //    string recvData = Encoding.UTF8.GetString(data, 0, recv);
-            //    Console.WriteLine("received data : {0}", recvData);
-
-            //    server.SendTo(Encoding.UTF8.GetBytes(recvData), remoteEP);
-            //    Console.WriteLine("send data : {0}", Encoding.UTF8.GetString(data, 0, recv));
-            //    Console.WriteLine("");
-            //}
 
             server.Close();
             Thread th = new Thread(asyncConnectClient);
@@ -172,12 +160,11 @@ namespace MultiChatServer
             IPEndPoint serverEP = new IPEndPoint(thisAddress, serverPort);
 
             udpSock.Bind(serverEP);
-            //udpSock.Listen(10);
             mainSock.Bind(serverEP);
             mainSock.Listen(10);
 
             AppendText(txtHistory, string.Format("서버 시작: @{0}", serverEP));
-
+            AppendText(txtAddress, thisAddress.ToString());
             // 비동기적으로 클라이언트의 연결 요청을 받는다.
             //udpSock.BeginAccept(AcceptCallback, null);
             mainSock.BeginAccept(AcceptCallback, null);
@@ -226,10 +213,11 @@ namespace MultiChatServer
                 Console.WriteLine(obj.Buffer);
                 // 텍스트로 변환한다.
                 string text = Encoding.UTF8.GetString(obj.Buffer);
-                Console.WriteLine(text);
-
+                Console.WriteLine("데이터 브로드 캐스트"+text);
+                string[] arrayText;
+                arrayText = text.ToString().Split('?');
                 DataForm data = new DataForm();
-                data = JsonConvert.DeserializeObject<DataForm>(text);
+                data = JsonConvert.DeserializeObject<DataForm>(arrayText[0]);
                 if (data.req == null)
                 {
                     MsgBoxHelper.Error("null");
@@ -259,13 +247,16 @@ namespace MultiChatServer
                         try
                         {
                             string request = JsonConvert.SerializeObject(data);
-                            socket.Send(obj.Buffer);
+                            AESEncrypt256(request, key);
+                            Encoding.UTF8.GetBytes(AESEncrypt256(request, key));
+                            Console.WriteLine("이 암호화된 내용으로 브로드 캐스팅 : "+ AESEncrypt256(request, key));
+                            socket.Send(Encoding.UTF8.GetBytes(AESEncrypt256(request, key)));
                         }
                         catch
                         {
                             // 오류 발생하면 전송 취소하고 리스트에서 삭제한다.
                             try { socket.Dispose(); } catch { }
-                            connectedClients.RemoveAt(i);
+                            // connectedClients.RemoveAt(i);
                         }
                     }
                 }
@@ -286,49 +277,6 @@ namespace MultiChatServer
         void OnSendData(object sender, EventArgs e)
         {
             sendData();
-            //// 서버가 대기중인지 확인한다.
-            //if (!mainSock.IsBound)
-            //{
-            //    MsgBoxHelper.Warn("서버가 실행되고 있지 않습니다!");
-            //    return;
-            //}
-
-            //// 보낼 텍스트
-            //string tts = txtTTS.Text.Trim();
-            //if (string.IsNullOrEmpty(tts))
-            //{
-            //    MsgBoxHelper.Warn("공지사항이 입력되지 않았습니다!");
-            //    txtTTS.Focus();
-            //    return;
-            //}
-
-            //DataForm dataForm = new DataForm();
-            //dataForm.id = "Server";
-            //dataForm.text = tts;
-            //notice = tts;
-            //dataForm.req = "notice";
-            //string request = JsonConvert.SerializeObject(dataForm);
-            //byte[] bDts = Encoding.UTF8.GetBytes(request);
-
-            //// 문자열을 utf8 형식의 바이트로 변환한다.
-            //// byte[] bDts = Encoding.UTF8.GetBytes("Server" + '`' + tts);
-
-            //// 연결된 모든 클라이언트에게 전송한다.
-            //for (int i = connectedClients.Count - 1; i >= 0; i--)
-            //{
-            //    Socket socket = connectedClients[i];
-            //    try { socket.Send(bDts); }
-            //    catch
-            //    {
-            //        // 오류 발생하면 전송 취소하고 리스트에서 삭제한다.
-            //        try { socket.Dispose(); } catch { }
-            //        connectedClients.RemoveAt(i);
-            //    }
-            //}
-
-            //// 전송 완료 후 텍스트박스에 추가하고, 원래의 내용은 지운다.
-            //AppendText(txtHistory, string.Format("[서버 공지]Server : {0}", tts));
-            //txtTTS.Clear();
         }
 
         private void ChatForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -348,7 +296,6 @@ namespace MultiChatServer
 
         private void txtTTS_TextChanged(object sender, EventArgs e, KeyPressEventArgs f)
         {
-            Console.WriteLine("눌림");
             if (Convert.ToInt32(f.KeyChar) == 13)
             {
                 //sendData();
@@ -392,11 +339,7 @@ namespace MultiChatServer
             dataForm.text = tts;
             notice = tts;
             dataForm.req = "notice";
-            string hi = AESEncrypt256("하이하이", "01234567891234560123456789123456");
-            Console.WriteLine(hi);
-
-            string ih = Decrypt256(hi, "01234567891234560123456789123456");
-            Console.WriteLine(ih);
+            
             string request = JsonConvert.SerializeObject(dataForm);
             string encryptedRequest = AESEncrypt256(request, key);
             Console.WriteLine(encryptedRequest);

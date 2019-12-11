@@ -169,7 +169,7 @@
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(93, 27);
             this.txtPort.TabIndex = 3;
-            this.txtPort.Text = "15000";
+            this.txtPort.Text = "15952";
             this.txtPort.TextChanged += new System.EventHandler(this.txtPort_TextChanged);
             // 
             // ChatForm_Server
